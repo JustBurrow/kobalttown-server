@@ -1,3 +1,12 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    sql-script-encoding: UTF-8
+    connection-test-query: SELECT 1
+    validation-query: SELECT 1
+  jpa:
+    database: mysql
+    open-in-view: false
 logging:
   level:
     root: warn
