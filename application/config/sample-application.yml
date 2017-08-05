@@ -1,3 +1,9 @@
+kobalttown.lul.kr:
+  resource:
+    # css.location : [kobalttown-design]/public/css/
+    css.location: file:./templates/css/
+    # css.location : [kobalttown-design]/public/js/
+    js.location: file:./templates/js/
 spring:
   thymeleaf:
     cache: false
