@@ -1,5 +1,8 @@
 package kr.lul.kobalttown.web.configuration;
 
+import kr.lul.kobalttown.jpa.entity.EntityPackageAnchor;
+import kr.lul.kobalttown.jpa.repository.RepositoryPackageAnchor;
+import kr.lul.kobalttown.jpa.support.converter.ConverterPackageAnchor;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +22,7 @@ import javax.sql.DataSource;
  * @since 2017. 8. 5.
  */
 @Configuration
-@EnableJpaRepositories
+@EnableJpaRepositories(basePackageClasses = {RepositoryPackageAnchor.class})
 @EnableTransactionManagement
 public class JpaConfiguation {
   @Bean
@@ -34,7 +37,8 @@ public class JpaConfiguation {
 
     LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
     factory.setDataSource(dataSource());
-    factory.setPackagesToScan();
+    factory.setPackagesToScan(ConverterPackageAnchor.PACKAGE_NAME, EntityPackageAnchor.PACKAGE_NAME,
+                              RepositoryPackageAnchor.PACKAGE_NAME);
     factory.setJpaVendorAdapter(adapter);
 
     return factory;
