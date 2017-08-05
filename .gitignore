@@ -22,4 +22,7 @@ Temporary Items
 # IntelliJ IDEA
 *.iml
 .idea/
-target/
+
+# Springframework #####################################################################################################
+**/config/
+**/target/
