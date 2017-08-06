@@ -1,6 +1,7 @@
 package kr.lul.kobalttown.web;
 
 import kr.lul.kobalttown.jpa.JpaPackageAnchor;
+import kr.lul.kobalttown.service.ServicePackageAnchor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +14,7 @@ import static java.lang.String.format;
  * @author justburrow
  * @since 2017. 8. 5.
  */
-@SpringBootApplication(scanBasePackageClasses = {JpaPackageAnchor.class})
+@SpringBootApplication(scanBasePackageClasses = {JpaPackageAnchor.class, ServicePackageAnchor.class, Application.class})
 public class Application {
   private static final Logger log = LoggerFactory.getLogger(Application.class);
 

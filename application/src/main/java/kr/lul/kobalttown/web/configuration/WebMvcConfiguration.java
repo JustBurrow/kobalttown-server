@@ -2,7 +2,9 @@ package kr.lul.kobalttown.web.configuration;
 
 import kr.lul.kobalttown.web.configuration.Constants.Properties;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -16,6 +18,11 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
   private String cssLocation;
   @Value("${" + Properties.JS_LOCATION + ":#{null}}")
   private String jsLocation;
+
+  @Bean
+  public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+    return new HiddenHttpMethodFilter();
+  }
 
   /**
    * 프로젝트 로컬 레포지토리 혹은 JAR 파일 외부의 리소스를 사용하기 위해 핸들러를 추가한다.
