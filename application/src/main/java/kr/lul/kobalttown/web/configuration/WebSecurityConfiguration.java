@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.web.configuration;
 
-import kr.lul.kobalttown.web.security.UserService;
+import kr.lul.kobalttown.web.security.AuthUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +25,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
   private static final Logger log = LoggerFactory.getLogger(WebSecurityConfiguration.class);
 
   @Autowired
-  private UserService userService;
+  private AuthUserService authUserService;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     if (log.isTraceEnabled()) {
       log.trace(format("passwordEncoder=%s", passwordEncoder));
     }
@@ -38,7 +38,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(this.userService).passwordEncoder(passwordEncoder());
+    auth.userDetailsService(this.authUserService)
+        .passwordEncoder(passwordEncoder());
   }
 
   @Override

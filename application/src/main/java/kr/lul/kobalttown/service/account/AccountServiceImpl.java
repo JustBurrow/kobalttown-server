@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static java.lang.String.format;
+import static kr.lul.kobalttown.util.Asserts.matches;
 
 /**
  * @author justburrow
@@ -26,6 +27,7 @@ import static java.lang.String.format;
     if (log.isTraceEnabled()) {
       log.trace(format("args : params=%s", params));
     }
+    matches(params.getPassword(), "\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}", "params.password");
 
     Account account = new AccountEntity(params.getEmail(), params.getPassword());
     account = this.accountRepository.save((AccountEntity) account);
