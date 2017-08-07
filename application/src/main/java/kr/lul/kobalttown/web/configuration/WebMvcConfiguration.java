@@ -1,12 +1,17 @@
 package kr.lul.kobalttown.web.configuration;
 
 import kr.lul.kobalttown.web.configuration.Constants.Properties;
+import kr.lul.kobalttown.web.security.AuthUserArgumentResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import java.util.List;
 
 /**
  * @author justburrow
@@ -18,6 +23,9 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
   private String cssLocation;
   @Value("${" + Properties.JS_LOCATION + ":#{null}}")
   private String jsLocation;
+
+  @Autowired
+  private AuthUserArgumentResolver authUserArgumentResolver;
 
   @Bean
   public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
@@ -45,5 +53,10 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
     if (null != this.jsLocation) {
       registry.addResourceHandler("/js/**").addResourceLocations(this.jsLocation);
     }
+  }
+
+  @Override
+  public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+    resolvers.add(this.authUserArgumentResolver);
   }
 }

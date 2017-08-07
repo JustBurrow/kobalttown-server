@@ -1,5 +1,6 @@
 package kr.lul.kobalttown.web.controller;
 
+import kr.lul.kobalttown.web.security.AuthUser;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,5 +12,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping
 public interface IndexController {
   @GetMapping
-  String index(Model model);
+  String index(AuthUser user, Model model);
 }
