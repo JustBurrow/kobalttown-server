@@ -23,7 +23,7 @@ import static kr.lul.kobalttown.util.Asserts.zero;
   private AccountRepository accountRepository;
 
   @Override
-  public Account create(Account account) {
+  public Account insert(Account account) {
     if (log.isTraceEnabled()) {
       log.trace(format("args : account=%s", account));
     }
