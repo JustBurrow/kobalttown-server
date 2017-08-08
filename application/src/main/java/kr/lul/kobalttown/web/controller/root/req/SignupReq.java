@@ -1,4 +1,4 @@
-package kr.lul.kobalttown.web.controller.req;
+package kr.lul.kobalttown.web.controller.root.req;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Email;

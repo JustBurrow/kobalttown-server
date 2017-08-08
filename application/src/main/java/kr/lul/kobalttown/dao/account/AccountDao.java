@@ -1,0 +1,13 @@
+package kr.lul.kobalttown.dao.account;
+
+import kr.lul.kobalttown.domain.Account;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * @author justburrow
+ * @since 2017. 8. 8.
+ */
+@Transactional
+public interface AccountDao {
+  Account create(Account account);
+}

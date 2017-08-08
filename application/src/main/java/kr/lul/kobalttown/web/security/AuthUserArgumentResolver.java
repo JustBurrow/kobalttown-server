@@ -27,9 +27,11 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
     if (log.isTraceEnabled()) {
       log.trace(format("args : parameter=%s", parameter));
     }
+
     boolean result = AuthUser.class.equals(parameter.getParameterType());
+
     if (log.isTraceEnabled()) {
-      log.trace(format("result : return=%b", result));
+      log.trace(format("result : support=%b", result));
     }
     return result;
   }
@@ -38,12 +40,15 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
   public Object resolveArgument(MethodParameter param, ModelAndViewContainer mav, NativeWebRequest req, WebDataBinderFactory binder) throws Exception {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication instanceof AnonymousAuthenticationToken) {
+      if (log.isTraceEnabled()) {
+        log.trace("return : pricipal=null");
+      }
       return null;
     }
 
     Object principal = authentication.getPrincipal();
     if (log.isTraceEnabled()) {
-      log.trace("return=%s", principal);
+      log.trace(format("return : principal=%s", principal));
     }
     return principal instanceof AuthUser
         ? (AuthUser) principal

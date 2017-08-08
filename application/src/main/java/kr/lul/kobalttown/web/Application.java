@@ -1,5 +1,7 @@
 package kr.lul.kobalttown.web;
 
+import kr.lul.kobalttown.borderline.BorderlinePackageAnchor;
+import kr.lul.kobalttown.dao.DaoPackageAnchor;
 import kr.lul.kobalttown.jpa.JpaPackageAnchor;
 import kr.lul.kobalttown.service.ServicePackageAnchor;
 import org.slf4j.Logger;
@@ -14,7 +16,13 @@ import static java.lang.String.format;
  * @author justburrow
  * @since 2017. 8. 5.
  */
-@SpringBootApplication(scanBasePackageClasses = {JpaPackageAnchor.class, ServicePackageAnchor.class, Application.class})
+@SpringBootApplication(scanBasePackageClasses = {
+    JpaPackageAnchor.class,
+    DaoPackageAnchor.class,
+    ServicePackageAnchor.class,
+    BorderlinePackageAnchor.class,
+    Application.class
+})
 public class Application {
   private static final Logger log = LoggerFactory.getLogger(Application.class);
 

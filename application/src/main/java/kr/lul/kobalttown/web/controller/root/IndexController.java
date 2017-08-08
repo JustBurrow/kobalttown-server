@@ -1,4 +1,4 @@
-package kr.lul.kobalttown.web.controller;
+package kr.lul.kobalttown.web.controller.root;
 
 import kr.lul.kobalttown.web.security.AuthUser;
 import org.springframework.ui.Model;

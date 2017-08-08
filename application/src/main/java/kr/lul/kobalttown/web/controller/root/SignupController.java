@@ -1,6 +1,6 @@
-package kr.lul.kobalttown.web.controller;
+package kr.lul.kobalttown.web.controller.root;
 
-import kr.lul.kobalttown.web.controller.req.SignupReq;
+import kr.lul.kobalttown.web.controller.root.req.SignupReq;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;

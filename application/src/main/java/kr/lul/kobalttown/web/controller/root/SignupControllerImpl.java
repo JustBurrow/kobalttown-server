@@ -1,8 +1,8 @@
-package kr.lul.kobalttown.web.controller;
+package kr.lul.kobalttown.web.controller.root;
 
 import kr.lul.kobalttown.service.account.AccountService;
 import kr.lul.kobalttown.service.account.params.CreateAccountParams;
-import kr.lul.kobalttown.web.controller.req.SignupReq;
+import kr.lul.kobalttown.web.controller.root.req.SignupReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
