@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.service.account;
 
 import kr.lul.kobalttown.dao.account.AccountDao;
-import kr.lul.kobalttown.domain.Account;
+import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.jpa.entity.AccountEntity;
 import kr.lul.kobalttown.service.account.params.CreateAccountParams;
 import org.slf4j.Logger;

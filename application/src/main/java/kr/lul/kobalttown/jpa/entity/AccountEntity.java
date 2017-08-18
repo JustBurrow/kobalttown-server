@@ -1,11 +1,14 @@
 package kr.lul.kobalttown.jpa.entity;
 
-import kr.lul.kobalttown.domain.Account;
+import kr.lul.kobalttown.domain.account.Account;
+import kr.lul.kobalttown.domain.account.AccountPrincipal;
 import kr.lul.kobalttown.jpa.support.entity.AbstractUpdatableEntity;
 
 import javax.persistence.*;
 import java.time.Instant;
 import java.util.Objects;
+
+import static kr.lul.kobalttown.util.Asserts.hasLength;
 
 /**
  * @author justburrow
@@ -13,25 +16,32 @@ import java.util.Objects;
  */
 @Entity(name = "Account")
 @Table(name = "user_account",
-    uniqueConstraints = {@UniqueConstraint(name = "UQ_ACCOUNT_EMAIL", columnNames = {"email"})})
+    uniqueConstraints = {@UniqueConstraint(name = "UQ_ACCOUNT_PRINCIPAL", columnNames = {"principal"})})
 public class AccountEntity extends AbstractUpdatableEntity implements Account {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false, insertable = false, updatable = false)
-  private long    id;
-  @Column(name = "email", nullable = false, updatable = false)
-  private String  email;
-  @Column(name = "password", nullable = false)
-  private String  password;
+  private long             id;
+  @OneToOne(targetEntity = AccountPrincipalEntity.class,
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @JoinColumn(name = "principal",
+      nullable = false,
+      foreignKey = @ForeignKey(name = "FK_ACCOUNT_PK_ACCOUNT_PRINCIPAL"),
+      referencedColumnName = "id")
+  private AccountPrincipal principal;
   @Column(name = "enabled", nullable = false)
-  private boolean enabled;
+  private boolean          enabled;
 
   private AccountEntity() {
   }
 
   public AccountEntity(String email, String password) {
-    this.email = email;
-    setPassword(password);
+    setPrincipal(email, password);
+  }
+
+  private AccountPrincipal setPrincipal(String email, String password) {
+    this.principal = new AccountPrincipalEntity(this, email, password);
+    return this.principal;
   }
 
   @PrePersist
@@ -53,17 +63,18 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
 
   @Override
   public String getEmail() {
-    return this.email;
+    return this.principal.getPublicKey();
   }
 
   @Override
   public String getPassword() {
-    return this.password;
+    return this.principal.getPrivateKey();
   }
 
   @Override
   public void setPassword(String password) {
-    this.password = password;
+    hasLength(password, "password");
+    setPrincipal(getEmail(), password);
   }
 
   @Override
@@ -90,8 +101,7 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
     return new StringBuffer(AccountEntity.class.getSimpleName())
         .append('{')
         .append("id=").append(this.id)
-        .append(", email='").append(this.email).append('\'')
-        .append(", password='").append(this.password).append('\'')
+        .append(", email='").append(this.getEmail()).append("«', password=[ PROTECTED ]")
         .append(", enabled=").append(this.enabled)
         .append(", create=").append(getCreate())
         .append(", update=").append(getUpdate())

@@ -2,7 +2,7 @@ package kr.lul.kobalttown.borderline.account;
 
 import kr.lul.kobalttown.borderline.account.cmd.CreateAccountCmd;
 import kr.lul.kobalttown.borderline.account.dto.AccountDto;
-import kr.lul.kobalttown.domain.Account;
+import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.service.account.AccountService;
 import kr.lul.kobalttown.service.account.params.CreateAccountParams;
 import org.slf4j.Logger;

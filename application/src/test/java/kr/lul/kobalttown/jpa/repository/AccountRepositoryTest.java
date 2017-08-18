@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.jpa.repository;
 
-import kr.lul.kobalttown.domain.Account;
+import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.jpa.JpaPackageTestConfiguration;
 import kr.lul.kobalttown.jpa.entity.AccountEntity;
 import kr.lul.kobalttown.util.EmailUtils;

@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.web.security;
 
-import kr.lul.kobalttown.domain.Account;
+import kr.lul.kobalttown.domain.account.Account;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
+import static kr.lul.kobalttown.util.Asserts.notNull;
 
 /**
  * @author justburrow
@@ -23,6 +24,8 @@ public class AuthUser implements UserDetails {
   }
 
   public AuthUser(Account account) {
+    notNull(account, "account");
+
     this.id = account.getId();
     this.username = account.getEmail();
     this.password = account.getPassword();

@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.dao.account;
 
 import kr.lul.kobalttown.dao.DaoPackageTestConfiguration;
-import kr.lul.kobalttown.domain.Account;
+import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.jpa.entity.AccountEntity;
 import kr.lul.kobalttown.util.EmailUtils;
 import org.junit.Before;
@@ -70,5 +70,18 @@ public class AccountDaoTest {
     assertThat(actual.getCreate())
         .isAfterOrEqualTo(this.before)
         .isEqualTo(actual.getUpdate());
+  }
+
+  @Test
+  public void testInsertWithDuplicatedEmail() throws Exception {
+    // Given
+    final String  email             = EmailUtils.random();
+    final String  password          = this.passwordEncoder.encode(random(R.in(2, 20)));
+    final Account preAccount        = this.accountDao.insert(new AccountEntity(email, password));
+    final Account duplicatedAccount = new AccountEntity(email, password);
+
+    // When & Then
+    assertThatThrownBy(() -> this.accountDao.insert(duplicatedAccount))
+        .isNotNull();
   }
 }

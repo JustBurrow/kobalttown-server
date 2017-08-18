@@ -4,4 +4,4 @@
  * @author justburrow
  * @since 2017. 8. 5.
  */
-package kr.lul.kobalttown.domain;
+package kr.lul.kobalttown.domain.account;

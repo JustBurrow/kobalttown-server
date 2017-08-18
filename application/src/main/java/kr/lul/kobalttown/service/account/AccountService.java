@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.service.account;
 
-import kr.lul.kobalttown.domain.Account;
+import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.service.account.params.CreateAccountParams;
 import org.springframework.transaction.annotation.Transactional;
 

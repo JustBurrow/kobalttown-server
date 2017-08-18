@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.dao.account;
 
-import kr.lul.kobalttown.domain.Account;
+import kr.lul.kobalttown.domain.account.Account;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

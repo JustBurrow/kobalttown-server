@@ -1,4 +1,4 @@
-package kr.lul.kobalttown.domain;
+package kr.lul.kobalttown.domain.account;
 
 import java.time.Instant;
 

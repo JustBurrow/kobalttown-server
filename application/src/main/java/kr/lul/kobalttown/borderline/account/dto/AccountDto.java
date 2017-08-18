@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.borderline.account.dto;
 
-import kr.lul.kobalttown.domain.Account;
+import kr.lul.kobalttown.domain.account.Account;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
