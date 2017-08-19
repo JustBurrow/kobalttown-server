@@ -1,5 +1,6 @@
 package kr.lul.kobalttown.service.account;
 
+import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.service.ServicePackageTestConfiguration;
 import kr.lul.kobalttown.service.account.params.CreateAccountParams;
 import kr.lul.kobalttown.util.AssertionException;
@@ -88,5 +89,39 @@ public class AccountServiceTest {
     assertThatThrownBy(() -> this.accountService.create(params))
         .isInstanceOf(AssertionException.class)
         .hasMessage("params.password");
+  }
+
+  @Test
+  public void testCreateWithRandom() throws Exception {
+    // Given
+    final String email    = EmailUtils.random();
+    final String password = this.passwordEncoder.encode(random(R.in(1, 20)));
+
+    // When
+    final Account account = this.accountService.create(new CreateAccountParams(email, password));
+
+    // Then
+    assertThat(account)
+        .isNotNull()
+        .extracting(Account::getEmail, Account::isEnable)
+        .containsExactly(email, false);
+    assertThat(account.getId())
+        .isGreaterThan(0L);
+    assertThat(account.getCreate())
+        .isAfterOrEqualTo(this.before)
+        .isEqualTo(account.getUpdate());
+  }
+
+  @Test
+  public void testCreateWithDuplicatedEmail() throws Exception {
+    // Given
+    final String email = EmailUtils.random();
+    this.accountService.create(new CreateAccountParams(email, this.passwordEncoder.encode(random(R.in(1, 20)))));
+
+    // When & Then
+    assertThatThrownBy(
+        () -> this.accountService.create(
+            new CreateAccountParams(email, this.passwordEncoder.encode(random(R.in(1, 20))))))
+        .isNotNull();
   }
 }

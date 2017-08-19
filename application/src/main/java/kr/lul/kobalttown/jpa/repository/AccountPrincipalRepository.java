@@ -1,18 +1,15 @@
 package kr.lul.kobalttown.jpa.repository;
 
-import kr.lul.kobalttown.jpa.entity.AccountPrincipalEntity;
+import kr.lul.kobalttown.domain.account.AccountPrincipalType;
+import kr.lul.kobalttown.jpa.entity.AbstractAccountPrincipalEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.NoRepositoryBean;
 
 /**
  * @author justburrow
- * @since 2017. 8. 18.
+ * @since 2017. 8. 19.
  */
-@Repository
-public interface AccountPrincipalRepository extends JpaRepository<AccountPrincipalEntity, Long> {
-  /**
-   * @param publicKey
-   * @return
-   */
-  AccountPrincipalEntity findOneByPublicKey(String publicKey);
+@NoRepositoryBean
+public interface AccountPrincipalRepository<P extends AbstractAccountPrincipalEntity> extends JpaRepository<P, Long> {
+  AccountPrincipalType supportType();
 }

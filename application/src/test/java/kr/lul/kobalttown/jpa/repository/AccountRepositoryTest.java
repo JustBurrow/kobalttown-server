@@ -13,7 +13,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -46,8 +45,7 @@ public class AccountRepositoryTest {
   public void testSaveWithRandomAccount() throws Exception {
     // Given
     String              email    = EmailUtils.random();
-    String              pass     = randomAlphanumeric(40);
-    final AccountEntity expected = new AccountEntity(email, pass);
+    final AccountEntity expected = new AccountEntity(email);
 
     // When
     final AccountEntity actual = this.accountRepository.save(expected);

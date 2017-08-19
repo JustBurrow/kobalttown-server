@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.web.controller.root;
 
 import kr.lul.kobalttown.borderline.account.AccountBorderline;
-import kr.lul.kobalttown.web.security.AuthUser;
+import kr.lul.kobalttown.borderline.account.dto.AccountDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +21,16 @@ import static java.lang.String.format;
   private AccountBorderline accountBorderline;
 
   @Override
-  public String index(AuthUser user, final Model model) {
+  public String index(final AccountDto currentAccount, final Model model) {
     if (log.isTraceEnabled()) {
-      log.trace(format("args : user=%s, model=%s", user, model));
+      log.trace(format("args : currentAccount=%s, model=%s", currentAccount, model));
     }
 
-    if (null == user) {
+    if (null == currentAccount) {
       return "index";
     }
 
-    model.addAttribute("currentUser", user);
+    model.addAttribute("currentAccount", currentAccount);
 
     if (log.isTraceEnabled()) {
       log.trace(format("result : model=%s", model));

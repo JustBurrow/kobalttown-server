@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.web.controller.root;
 
-import kr.lul.kobalttown.web.security.AuthUser;
+import kr.lul.kobalttown.borderline.account.dto.AccountDto;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,5 +12,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping
 public interface IndexController {
   @GetMapping
-  String index(AuthUser user, Model model);
+  String index(final AccountDto currentAccount, final Model model);
 }

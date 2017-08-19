@@ -1,8 +1,7 @@
 package kr.lul.kobalttown.web.security;
 
-import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.domain.account.AccountPrincipal;
-import kr.lul.kobalttown.jpa.repository.AccountPrincipalRepository;
+import kr.lul.kobalttown.jpa.repository.AccountPrincipalEmailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ public class AuthUserService implements UserDetailsService {
   private static final Logger log = LoggerFactory.getLogger(AuthUserService.class);
 
   @Autowired
-  private AccountPrincipalRepository accountPrincipalRepository;
+  private AccountPrincipalEmailRepository accountPrincipalEmailRepository;
 
   @Override
   public AuthUser loadUserByUsername(String userKey) throws UsernameNotFoundException {
@@ -29,17 +28,16 @@ public class AuthUserService implements UserDetailsService {
       log.trace(format("args : userKey=%s", userKey));
     }
 
-    AccountPrincipal principal = this.accountPrincipalRepository.findOneByPublicKey(userKey);
+    AccountPrincipal principal = this.accountPrincipalEmailRepository.findOneByEmail(userKey);
     if (null == principal) {
       UsernameNotFoundException e = new UsernameNotFoundException(userKey);
       log.trace(format("account does not exist. userKey=%s", userKey), e);
       throw e;
     }
-    Account account = principal.getAccount();
 
     AuthUser user;
     try {
-      user = new AuthUser(account);
+      user = new AuthUser(principal);
     } catch (Exception e) {
       log.warn("Could not build AuthUser(UserDetails).", e);
       throw new UsernameNotFoundException("Could not build AuthUser(UserDetails).", e);

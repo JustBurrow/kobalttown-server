@@ -1,6 +1,7 @@
 package kr.lul.kobalttown.dao.account;
 
 import kr.lul.kobalttown.domain.account.Account;
+import kr.lul.kobalttown.domain.account.AccountPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -10,4 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface AccountDao {
   Account insert(Account account);
+
+  AccountPrincipal insert(AccountPrincipal principal);
 }

@@ -7,6 +7,8 @@ package kr.lul.kobalttown.domain.account;
 public interface AccountPrincipal extends Creatable {
   long getId();
 
+  AccountPrincipalType getType();
+
   Account getAccount();
 
   String getPublicKey();

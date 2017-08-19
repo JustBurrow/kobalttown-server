@@ -2,7 +2,9 @@ package kr.lul.kobalttown.service.account;
 
 import kr.lul.kobalttown.dao.account.AccountDao;
 import kr.lul.kobalttown.domain.account.Account;
+import kr.lul.kobalttown.domain.account.AccountPrincipal;
 import kr.lul.kobalttown.jpa.entity.AccountEntity;
+import kr.lul.kobalttown.jpa.entity.AccountPrincipalEmailEntity;
 import kr.lul.kobalttown.service.account.params.CreateAccountParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +34,11 @@ import static kr.lul.kobalttown.util.Asserts.*;
     notNull(params.getPassword(), "params.password");
     matches(params.getPassword(), "\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}", "params.password");
 
-    Account account = new AccountEntity(params.getEmail(), params.getPassword());
+    Account account = new AccountEntity(params.getEmail());
     account = this.accountDao.insert(account);
+
+    AccountPrincipal principal = new AccountPrincipalEmailEntity(account, params.getEmail(), params.getPassword());
+    principal = this.accountDao.insert(principal);
 
     if (log.isTraceEnabled()) {
       log.trace(format("result : account=%s", account));

@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -16,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
-import static kr.lul.kobalttown.util.RandomUtil.R;
-import static org.apache.commons.lang3.RandomStringUtils.random;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -48,7 +47,7 @@ public class AccountDaoTest {
 
   @Test
   public void testInsertWithNull() throws Exception {
-    assertThatThrownBy(() -> this.accountDao.insert(null))
+    assertThatThrownBy(() -> this.accountDao.insert((Account) null))
         .isNotNull();
   }
 
@@ -56,8 +55,7 @@ public class AccountDaoTest {
   public void testInsert() throws Exception {
     // Given
     final String  email    = EmailUtils.random();
-    final String  password = this.passwordEncoder.encode(random(R.in(2, 20)));
-    final Account expected = new AccountEntity(email, password);
+    final Account expected = new AccountEntity(email);
 
     // When
     final Account actual = this.accountDao.insert(expected);
@@ -65,8 +63,8 @@ public class AccountDaoTest {
     // Then
     assertThat(actual.getId()).isGreaterThan(0L);
     assertThat(actual)
-        .extracting(Account::getEmail, Account::getPassword)
-        .containsExactly(email, password);
+        .extracting(Account::getEmail)
+        .containsExactly(email);
     assertThat(actual.getCreate())
         .isAfterOrEqualTo(this.before)
         .isEqualTo(actual.getUpdate());
@@ -75,13 +73,14 @@ public class AccountDaoTest {
   @Test
   public void testInsertWithDuplicatedEmail() throws Exception {
     // Given
-    final String  email             = EmailUtils.random();
-    final String  password          = this.passwordEncoder.encode(random(R.in(2, 20)));
-    final Account preAccount        = this.accountDao.insert(new AccountEntity(email, password));
-    final Account duplicatedAccount = new AccountEntity(email, password);
+    final String email = EmailUtils.random();
+    assertThat(this.accountDao.insert(new AccountEntity(email)))
+        .isNotNull();
+    final Account expected = new AccountEntity(email);
 
     // When & Then
-    assertThatThrownBy(() -> this.accountDao.insert(duplicatedAccount))
-        .isNotNull();
+    assertThatThrownBy(() -> this.accountDao.insert(expected))
+        .isNotNull()
+        .isInstanceOf(DataIntegrityViolationException.class);
   }
 }

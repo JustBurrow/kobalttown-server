@@ -1,5 +1,6 @@
 package kr.lul.kobalttown.web.security;
 
+import kr.lul.kobalttown.borderline.account.dto.AccountDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
@@ -28,7 +29,8 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
       log.trace(format("args : parameter=%s", parameter));
     }
 
-    boolean result = AuthUser.class.equals(parameter.getParameterType());
+    boolean result = AccountDto.class.equals(parameter.getParameterType());
+    result &= "currentAccount".equals(parameter.getParameterName());
 
     if (log.isTraceEnabled()) {
       log.trace(format("result : support=%b", result));
@@ -41,17 +43,22 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication instanceof AnonymousAuthenticationToken) {
       if (log.isTraceEnabled()) {
-        log.trace("return : pricipal=null");
+        log.trace("return : null");
       }
       return null;
     }
 
     Object principal = authentication.getPrincipal();
-    if (log.isTraceEnabled()) {
-      log.trace(format("return : principal=%s", principal));
+    if (!(principal instanceof AuthUser)) {
+      return null;
     }
-    return principal instanceof AuthUser
-        ? (AuthUser) principal
-        : null;
+
+    AuthUser   auth    = (AuthUser) principal;
+    AccountDto account = new AccountDto(auth.getId(), auth.getUsername(), auth.isEnabled());
+    if (log.isTraceEnabled()) {
+      log.trace(format("result : principal=%s, account=%s", principal, account));
+      log.trace(format("return : %s", account));
+    }
+    return account;
   }
 }
