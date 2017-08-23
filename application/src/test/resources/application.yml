@@ -1,5 +1,0 @@
-logging:
-  level:
-    root: warn
-    org.hibernate.SQL: trace
-    org.hibernate.type: trace

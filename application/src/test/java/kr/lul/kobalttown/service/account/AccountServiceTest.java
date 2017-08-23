@@ -10,12 +10,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.internet.MimeMessage;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 import static kr.lul.kobalttown.util.RandomUtil.R;
 import static org.apache.commons.lang3.RandomStringUtils.random;
@@ -123,5 +127,21 @@ public class AccountServiceTest {
         () -> this.accountService.create(
             new CreateAccountParams(email, this.passwordEncoder.encode(random(R.in(1, 20))))))
         .isNotNull();
+  }
+
+  @Autowired
+  private JavaMailSender javaMailSender;
+
+  @Test
+  public void testMail() throws Exception {
+    MimeMessage       message = javaMailSender.createMimeMessage();
+    MimeMessageHelper helper  = new MimeMessageHelper(message);
+
+    helper.setFrom("dev@lul.kr");
+    helper.setTo("just.burrow@lul.kr");
+    helper.setText("set text at " + LocalDateTime.now());
+    helper.setSubject("set subject");
+
+    javaMailSender.send(message);
   }
 }
