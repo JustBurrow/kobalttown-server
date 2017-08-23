@@ -1,14 +1,23 @@
 kobalttown.lul.kr:
   resource:
-    # css.location : [kobalttown-design]/public/css/
-    css.location: file:./templates/css/
-    # css.location : [kobalttown-design]/public/js/
-    js.location: file:./templates/js/
+    css.location: [kobalttown-design]/public/css/
+    js.location: [kobalttown-design]/public/js/
+  mail:
+    username: "just.burrow@lul.kr"
+    password: "[ --- PASSWORD --- ]"
 spring:
   thymeleaf:
     cache: false
     prefix: file:./templates/
+  datasource:
+    url: jdbc:mysql://localhost/kobalttown
+    max-active: 1
+    username: root
+    password: "[ --- PASSWORD --- ]"
+  jpa:
+    generate-ddl: true
+    show-sql: true
 logging:
   level:
     root: warn
-    kr.lul.kobalttown: trace
+    kr.lul.kobalttown: debug
