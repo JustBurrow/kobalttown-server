@@ -30,8 +30,6 @@ import static java.lang.String.format;
       return "index";
     }
 
-    model.addAttribute("currentAccount", currentAccount);
-
     if (log.isTraceEnabled()) {
       log.trace(format("result : model=%s", model));
     }

@@ -22,16 +22,20 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
   private long    id;
   @Column(name = "email", unique = true, nullable = false)
   private String  email;
+  @Column(name = "name", nullable = false)
+  private String  name;
   @Column(name = "enabled", nullable = false)
   private boolean enabled;
 
   private AccountEntity() {
   }
 
-  public AccountEntity(String email) {
+  public AccountEntity(String email, String name) {
     hasLength(email, "email");
+    hasLength(name, "name");
 
     this.email = email;
+    this.name = name;
   }
 
   @PrePersist
@@ -54,6 +58,11 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
   @Override
   public String getEmail() {
     return this.email;
+  }
+
+  @Override
+  public String getName() {
+    return name;
   }
 
   @Override
@@ -80,6 +89,7 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
     return new StringBuffer(AccountEntity.class.getSimpleName())
         .append("{id=").append(this.id)
         .append(", email='").append(this.email).append('\'')
+        .append(", name='").append(this.name).append('\'')
         .append(", enabled=").append(this.enabled)
         .append(", create=").append(getCreate())
         .append(", update=").append(getUpdate())

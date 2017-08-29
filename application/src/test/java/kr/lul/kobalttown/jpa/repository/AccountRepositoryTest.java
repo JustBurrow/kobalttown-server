@@ -13,6 +13,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,12 +25,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest(classes = JpaPackageTestConfiguration.class)
 @Transactional
 @Rollback
-public class AccountRepositoryTest {
+public class AccountRepositoryTest extends AbstractRepositoryTest {
   @Autowired
   private AccountRepository accountRepository;
 
   @Before
   public void setUp() throws Exception {
+    commonSetUp();
+
     assertThat(this.accountRepository).isNotNull();
   }
 
@@ -44,8 +47,9 @@ public class AccountRepositoryTest {
   @Test
   public void testSaveWithRandomAccount() throws Exception {
     // Given
-    String              email    = EmailUtils.random();
-    final AccountEntity expected = new AccountEntity(email);
+    final String        email    = EmailUtils.random();
+    final String        name     = randomAlphanumeric(1, 10);
+    final AccountEntity expected = new AccountEntity(email, name);
 
     // When
     final AccountEntity actual = this.accountRepository.save(expected);
@@ -53,6 +57,13 @@ public class AccountRepositoryTest {
     // Then
     assertThat(actual)
         .isNotNull()
-        .extracting(Account::getEmail);
+        .extracting(Account::getEmail, AccountEntity::getName)
+        .containsExactly(email, name);
+    assertThat(actual.getId())
+        .isGreaterThan(0L);
+    assertThat(actual.getCreate())
+        .isNotNull()
+        .isAfterOrEqualTo(before)
+        .isEqualTo(actual.getUpdate());
   }
 }

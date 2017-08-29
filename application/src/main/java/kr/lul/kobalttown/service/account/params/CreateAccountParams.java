@@ -9,13 +9,15 @@ import lombok.Data;
 @Data
 public class CreateAccountParams {
   private String email;
+  private String name;
   private String password;
 
   public CreateAccountParams() {
   }
 
-  public CreateAccountParams(String email, String password) {
+  public CreateAccountParams(String email, String name, String password) {
     this.email = email;
+    this.name = name;
     this.password = password;
   }
 }

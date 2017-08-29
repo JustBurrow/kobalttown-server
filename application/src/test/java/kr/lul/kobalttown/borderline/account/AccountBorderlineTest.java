@@ -52,8 +52,10 @@ public class AccountBorderlineTest {
   @Test
   public void testCreate() throws Exception {
     // Given
-    final String           email = EmailUtils.random();
-    final CreateAccountCmd cmd   = new CreateAccountCmd(email, this.passwordEncoder.encode(randomAlphanumeric(4, 20)));
+    final String email = EmailUtils.random();
+    final String name  = randomAlphanumeric(1, 20);
+    final CreateAccountCmd cmd = new CreateAccountCmd(
+        email, name, this.passwordEncoder.encode(randomAlphanumeric(4, 20)));
 
     // When
     final AccountDto dto = this.accountBorderline.create(cmd);
@@ -62,8 +64,8 @@ public class AccountBorderlineTest {
     assertThat(dto.getId())
         .isGreaterThan(0L);
     assertThat(dto)
-        .extracting(AccountDto::getEmail, AccountDto::isEnabled)
-        .containsExactly(email, false);
+        .extracting(AccountDto::getEmail, AccountDto::getName, AccountDto::isEnabled)
+        .containsExactly(email, name, false);
     assertThat(dto.getCreate())
         .isNotNull()
         .isAfterOrEqualTo(this.before)

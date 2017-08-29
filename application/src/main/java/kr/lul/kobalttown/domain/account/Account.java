@@ -9,5 +9,7 @@ public interface Account extends Updatable {
 
   String getEmail();
 
+  String getName();
+
   boolean isEnable();
 }

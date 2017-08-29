@@ -1,6 +1,7 @@
 package kr.lul.kobalttown.service.account;
 
 import kr.lul.kobalttown.domain.account.Account;
+import kr.lul.kobalttown.service.AbstractServiceTest;
 import kr.lul.kobalttown.service.ServicePackageTestConfiguration;
 import kr.lul.kobalttown.service.account.params.CreateAccountParams;
 import kr.lul.kobalttown.util.AssertionException;
@@ -10,19 +11,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.mail.internet.MimeMessage;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 import static kr.lul.kobalttown.util.RandomUtil.R;
 import static org.apache.commons.lang3.RandomStringUtils.random;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -34,14 +31,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest(classes = ServicePackageTestConfiguration.class)
 @Transactional
 @Rollback
-public class AccountServiceTest {
+public class AccountServiceTest extends AbstractServiceTest {
   @Autowired
   private AccountService accountService;
-
-  @Autowired
-  private PasswordEncoder passwordEncoder;
-
-  private Instant before;
 
   @Before
   public void setUp() throws Exception {
@@ -60,12 +52,9 @@ public class AccountServiceTest {
 
   @Test
   public void testCreateWithNullEmail() throws Exception {
-    // Given
-    final String              password = this.passwordEncoder.encode(random(R.in(1, 20)));
-    final CreateAccountParams params   = new CreateAccountParams(null, password);
-
     // When & Then
-    assertThatThrownBy(() -> this.accountService.create(params))
+    assertThatThrownBy(() -> this.accountService.create(
+        new CreateAccountParams(null, randomAlphanumeric(R.in(1, 10)), passwordEncoder.encode(random(R.in(1, 10))))))
         .isInstanceOf(AssertionException.class)
         .hasMessage("params.email");
   }
@@ -74,7 +63,7 @@ public class AccountServiceTest {
   public void testCreateWithNullPassword() throws Exception {
     // Given
     final String              email  = EmailUtils.random();
-    final CreateAccountParams params = new CreateAccountParams(email, null);
+    final CreateAccountParams params = new CreateAccountParams(email, randomAlphanumeric(R.in(1, 10)), null);
 
     // When & Then
     assertThatThrownBy(() -> this.accountService.create(params))
@@ -85,9 +74,9 @@ public class AccountServiceTest {
   @Test
   public void testCreateWithIllegalPassword() throws Exception {
     // Given
-    final String              email    = EmailUtils.random();
-    final String              password = this.passwordEncoder.encode(random(R.in(1, 20))).substring(1) + "*";
-    final CreateAccountParams params   = new CreateAccountParams(email, password);
+    final String password = this.passwordEncoder.encode(random(R.in(1, 20))).substring(1) + "*";
+    final CreateAccountParams params = new CreateAccountParams(
+        EmailUtils.random(), randomAlphanumeric(R.in(1, 10)), password);
 
     // When & Then
     assertThatThrownBy(() -> this.accountService.create(params))
@@ -99,16 +88,17 @@ public class AccountServiceTest {
   public void testCreateWithRandom() throws Exception {
     // Given
     final String email    = EmailUtils.random();
+    final String name     = randomAlphanumeric(R.in(1, 20));
     final String password = this.passwordEncoder.encode(random(R.in(1, 20)));
 
     // When
-    final Account account = this.accountService.create(new CreateAccountParams(email, password));
+    final Account account = this.accountService.create(new CreateAccountParams(email, name, password));
 
     // Then
     assertThat(account)
         .isNotNull()
-        .extracting(Account::getEmail, Account::isEnable)
-        .containsExactly(email, false);
+        .extracting(Account::getEmail, Account::getName, Account::isEnable)
+        .containsExactly(email, name, false);
     assertThat(account.getId())
         .isGreaterThan(0L);
     assertThat(account.getCreate())
@@ -120,28 +110,14 @@ public class AccountServiceTest {
   public void testCreateWithDuplicatedEmail() throws Exception {
     // Given
     final String email = EmailUtils.random();
-    this.accountService.create(new CreateAccountParams(email, this.passwordEncoder.encode(random(R.in(1, 20)))));
+    this.accountService.create(
+        new CreateAccountParams(email, randomAlphanumeric(1, 20), this.passwordEncoder.encode(random(R.in(1, 20)))));
 
     // When & Then
     assertThatThrownBy(
         () -> this.accountService.create(
-            new CreateAccountParams(email, this.passwordEncoder.encode(random(R.in(1, 20))))))
-        .isNotNull();
-  }
-
-  @Autowired
-  private JavaMailSender javaMailSender;
-
-  @Test
-  public void testMail() throws Exception {
-    MimeMessage       message = javaMailSender.createMimeMessage();
-    MimeMessageHelper helper  = new MimeMessageHelper(message);
-
-    helper.setFrom("dev@lul.kr");
-    helper.setTo("just.burrow@lul.kr");
-    helper.setText("set text at " + LocalDateTime.now());
-    helper.setSubject("set subject");
-
-    javaMailSender.send(message);
+            new CreateAccountParams(email, randomAlphanumeric(2, 20),
+                                    this.passwordEncoder.encode(random(R.in(1, 20))))
+        )).isNotNull();
   }
 }

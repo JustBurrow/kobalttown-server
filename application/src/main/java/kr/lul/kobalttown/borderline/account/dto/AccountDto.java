@@ -17,21 +17,24 @@ import java.time.Instant;
 public class AccountDto extends UpdatableDto {
   private long    id;
   private String  email;
+  private String  name;
   private boolean enabled;
 
   public AccountDto() {
   }
 
-  public AccountDto(long id, String email, boolean enabled) {
+  public AccountDto(long id, String email, String name, boolean enabled) {
     this.id = id;
     this.email = email;
+    this.name = name;
     this.enabled = enabled;
   }
 
-  public AccountDto(long id, String email, boolean enabled, Instant create, Instant update) {
+  public AccountDto(long id, String email, String name, boolean enabled, Instant create, Instant update) {
     super(create, update);
     this.id = id;
     this.email = email;
+    this.name = name;
     this.enabled = enabled;
   }
 
@@ -40,6 +43,7 @@ public class AccountDto extends UpdatableDto {
 
     this.id = account.getId();
     this.email = account.getEmail();
+    this.name = account.getName();
     this.enabled = account.isEnable();
   }
 }

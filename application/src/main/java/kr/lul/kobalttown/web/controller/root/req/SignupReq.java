@@ -17,6 +17,9 @@ public class SignupReq {
   private String email;
   @NotNull
   @Size(min = 1)
+  private String name;
+  @NotNull
+  @Size(min = 1)
   private String password;
   @NotNull
   @Size(min = 1)
@@ -25,8 +28,9 @@ public class SignupReq {
   public SignupReq() {
   }
 
-  public SignupReq(String email, String password, String confirm) {
+  public SignupReq(String email, String name, String password, String confirm) {
     this.email = email;
+    this.name = name;
     this.password = password;
     this.confirm = confirm;
   }

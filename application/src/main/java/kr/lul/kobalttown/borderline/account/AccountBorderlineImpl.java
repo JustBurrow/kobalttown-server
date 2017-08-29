@@ -30,7 +30,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     }
     notNull(cmd, "cmd");
 
-    CreateAccountParams params  = new CreateAccountParams(cmd.getEmail(), cmd.getPassword());
+    CreateAccountParams params  = new CreateAccountParams(cmd.getEmail(), cmd.getName(), cmd.getPassword());
     Account             account = this.accountService.create(params);
 
     AccountDto dto = new AccountDto(account);

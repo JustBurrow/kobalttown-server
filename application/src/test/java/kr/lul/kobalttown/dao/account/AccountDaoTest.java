@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -55,7 +56,8 @@ public class AccountDaoTest {
   public void testInsert() throws Exception {
     // Given
     final String  email    = EmailUtils.random();
-    final Account expected = new AccountEntity(email);
+    final String  name     = randomAlphanumeric(1, 10);
+    final Account expected = new AccountEntity(email, name);
 
     // When
     final Account actual = this.accountDao.insert(expected);
@@ -74,9 +76,9 @@ public class AccountDaoTest {
   public void testInsertWithDuplicatedEmail() throws Exception {
     // Given
     final String email = EmailUtils.random();
-    assertThat(this.accountDao.insert(new AccountEntity(email)))
+    assertThat(this.accountDao.insert(new AccountEntity(email, randomAlphanumeric(1, 10))))
         .isNotNull();
-    final Account expected = new AccountEntity(email);
+    final Account expected = new AccountEntity(email, randomAlphanumeric(1, 10));
 
     // When & Then
     assertThatThrownBy(() -> this.accountDao.insert(expected))

@@ -54,7 +54,7 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
     }
 
     AuthUser   auth    = (AuthUser) principal;
-    AccountDto account = new AccountDto(auth.getId(), auth.getUsername(), auth.isEnabled());
+    AccountDto account = new AccountDto(auth.getId(), auth.getEmail(), auth.getName(), auth.isEnabled());
     if (log.isTraceEnabled()) {
       log.trace(format("result : principal=%s, account=%s", principal, account));
       log.trace(format("return : %s", account));

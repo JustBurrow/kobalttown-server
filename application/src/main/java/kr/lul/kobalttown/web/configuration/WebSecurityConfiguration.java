@@ -47,20 +47,20 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     if (log.isTraceEnabled()) {
       log.trace("start http security configuration.");
     }
-    http.authorizeRequests()
-        .antMatchers("/", "/css/**", "/js/**").permitAll()
-        .antMatchers("/signup/**").anonymous()
-        .anyRequest().authenticated();
+
     http.formLogin()
         .loginPage("/login")
         .usernameParameter("email")
         .passwordParameter("password")
-        .defaultSuccessUrl("/")
-        .failureUrl("/")
         .permitAll();
     http.logout()
         .logoutSuccessUrl("/")
         .permitAll();
+    http.authorizeRequests()
+        .antMatchers("/", "/css/**", "/js/**").permitAll()
+        .antMatchers("/signup/**", "/activate/*").anonymous()
+        .anyRequest().authenticated();
+
     if (log.isTraceEnabled()) {
       log.trace(format("end http security configuration."));
     }

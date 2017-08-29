@@ -16,7 +16,8 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
  */
 public class AuthUser implements UserDetails {
   private long    id;
-  private String  username;
+  private String  email;
+  private String  name;
   private String  password;
   private boolean enabled;
 
@@ -27,7 +28,8 @@ public class AuthUser implements UserDetails {
     notNull(principal, "principal");
 
     this.id = principal.getAccount().getId();
-    this.username = principal.getPublicKey();
+    this.email = principal.getPublicKey();
+    name = principal.getAccount().getName();
     this.password = principal.getPrivateKey();
     this.enabled = principal.getAccount().isEnable();
   }
@@ -36,9 +38,17 @@ public class AuthUser implements UserDetails {
     return this.id;
   }
 
+  public String getEmail() {
+    return email;
+  }
+
+  public String getName() {
+    return name;
+  }
+
   @Override
   public String getUsername() {
-    return this.username;
+    return this.email;
   }
 
   @Override
@@ -75,7 +85,8 @@ public class AuthUser implements UserDetails {
   public String toString() {
     return new StringBuffer(AuthUser.class.getSimpleName())
         .append("{id=").append(this.id)
-        .append(", username='").append(this.username).append('\'')
+        .append(", username='").append(this.getUsername()).append('\'')
+        .append(", name='").append(name).append('\'')
         .append(", password=[ PROTECTED ]")
         .append(", enabled=").append(this.enabled)
         .append('}').toString();
