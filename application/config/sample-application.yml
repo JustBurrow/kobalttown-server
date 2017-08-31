@@ -2,9 +2,13 @@ kobalttown.lul.kr:
   resource:
     css.location: [kobalttown-design]/public/css/
     js.location: [kobalttown-design]/public/js/
-  mail:
-    username: "just.burrow@lul.kr"
-    password: "[ --- PASSWORD --- ]"
+  email:
+    account-activate-code:
+      address: dev@lul.kr
+      name: "개발 테스트 메일"
+      subject: "계정 활성화 코드입니다."
+      template: "_email/account-activate"
+      host: "http://localhost:8080"
 spring:
   thymeleaf:
     cache: false
@@ -17,6 +21,9 @@ spring:
   jpa:
     generate-ddl: true
     show-sql: true
+  mail:
+    username: "just.burrow@lul.kr"
+    password: "[ --- PASSWORD --- ]"
 logging:
   level:
     root: warn
