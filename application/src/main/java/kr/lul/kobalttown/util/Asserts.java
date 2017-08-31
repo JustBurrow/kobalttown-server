@@ -2496,6 +2496,37 @@ public abstract class Asserts {
   }
 
   /**
+   * 문자열이 BCrypt 해시인지 판단한다.
+   *
+   * @param hash
+   * @throws NullPointerException <code>hash</code>가 <code>null</code>일 때.
+   * @throws AssertionException
+   */
+  public static void bcrypt(String hash) throws NullPointerException, AssertionException {
+    if (null == hash) {
+      throw new NullPointerException("hash is null.");
+    } else if (!hash.matches("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}")) {
+      throw new AssertionException(format("hash[%s] is not a bcrypt hash string."));
+    }
+  }
+
+  /**
+   * 문자열이 BCrypt 해시인지 판단한다.
+   *
+   * @param hash
+   * @param message
+   * @throws NullPointerException <code>hash</code>가 <code>null</code>일 때.
+   * @throws AssertionException
+   */
+  public static void bcrypt(String hash, String message) throws NullPointerException, AssertionException {
+    if (null == hash) {
+      throw new NullPointerException("hash is null.");
+    } else if (!hash.matches("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}")) {
+      throw new AssertionException(message);
+    }
+  }
+
+  /**
    * 배열이 비어있지 않음을 단정한다.
    *
    * @param array
