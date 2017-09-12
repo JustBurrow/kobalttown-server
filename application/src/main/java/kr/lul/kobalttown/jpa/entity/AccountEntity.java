@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.time.Instant;
 import java.util.Objects;
 
-import static kr.lul.kobalttown.util.Asserts.hasLength;
+import static kr.lul.kobalttown.util.Asserts.shorter;
 
 /**
  * @author justburrow
@@ -20,9 +20,9 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false, insertable = false, updatable = false)
   private long    id;
-  @Column(name = "email", unique = true, nullable = false)
+  @Column(name = "email", unique = true, nullable = false, length = EMAIL_MAX_LENGTH)
   private String  email;
-  @Column(name = "name", nullable = false)
+  @Column(name = "name", nullable = false, length = NAME_MAX_LENGTH)
   private String  name;
   @Column(name = "enabled", nullable = false)
   private boolean enabled;
@@ -31,8 +31,8 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
   }
 
   public AccountEntity(String email, String name) {
-    hasLength(email, "email");
-    hasLength(name, "name");
+    shorter(email, EMAIL_MAX_LENGTH, "email");
+    shorter(name, NAME_MAX_LENGTH, "name");
 
     this.email = email;
     this.name = name;
@@ -62,7 +62,7 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
 
   @Override
   public String getName() {
-    return name;
+    return this.name;
   }
 
   @Override

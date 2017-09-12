@@ -1,6 +1,9 @@
 package kr.lul.kobalttown.service.account;
 
 import kr.lul.kobalttown.domain.account.Account;
+import kr.lul.kobalttown.domain.account.AccountActivateCode;
+import kr.lul.kobalttown.jpa.entity.AccountActivateCodeEntity;
+import kr.lul.kobalttown.jpa.repository.AccountActivateCodeRepository;
 import kr.lul.kobalttown.service.AbstractServiceTest;
 import kr.lul.kobalttown.service.ServicePackageTestConfiguration;
 import kr.lul.kobalttown.service.account.params.CreateAccountParams;
@@ -14,8 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
 
 import static kr.lul.kobalttown.util.RandomUtil.R;
 import static org.apache.commons.lang3.RandomStringUtils.random;
@@ -33,14 +34,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Rollback
 public class AccountServiceTest extends AbstractServiceTest {
   @Autowired
-  private AccountService accountService;
+  private AccountActivateCodeRepository accountActivateCodeRepository;
 
   @Before
   public void setUp() throws Exception {
-    assertThat(this.accountService).isNotNull();
-    assertThat(this.passwordEncoder).isNotNull();
-
-    this.before = Instant.now();
+    super.setUp();
   }
 
   @Test
@@ -104,6 +102,12 @@ public class AccountServiceTest extends AbstractServiceTest {
     assertThat(account.getCreate())
         .isAfterOrEqualTo(this.before)
         .isEqualTo(account.getUpdate());
+
+    AccountActivateCodeEntity aac = accountActivateCodeRepository.findOneByAccount(account);
+    assertThat(aac)
+        .isNotNull()
+        .extracting(AccountActivateCode::getAccount, AccountActivateCode::getUsed)
+        .containsExactly(account, null);
   }
 
   @Test

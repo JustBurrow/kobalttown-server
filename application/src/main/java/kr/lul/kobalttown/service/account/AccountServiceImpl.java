@@ -3,6 +3,7 @@ package kr.lul.kobalttown.service.account;
 import it.ozimov.springboot.mail.service.EmailService;
 import kr.lul.kobalttown.dao.account.AccountDao;
 import kr.lul.kobalttown.domain.account.Account;
+import kr.lul.kobalttown.domain.account.AccountActivateCode;
 import kr.lul.kobalttown.domain.account.AccountPrincipal;
 import kr.lul.kobalttown.jpa.entity.AccountEntity;
 import kr.lul.kobalttown.jpa.entity.AccountPrincipalEmailEntity;
@@ -19,8 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 import static java.lang.String.format;
 import static kr.lul.kobalttown.util.Asserts.*;
@@ -44,9 +43,11 @@ import static kr.lul.kobalttown.util.Asserts.*;
   private String accountActivateHost;
 
   @Autowired
-  private AccountDao     accountDao;
+  private AccountActivateCodeService accountActivateCodeService;
   @Autowired
-  private MessageService messageService;
+  private AccountDao                 accountDao;
+  @Autowired
+  private MessageService             messageService;
 
   @Autowired
   private EmailService emailService;
@@ -70,19 +71,20 @@ import static kr.lul.kobalttown.util.Asserts.*;
     AccountPrincipal principal = new AccountPrincipalEmailEntity(account, params.getEmail(), params.getPassword());
     principal = this.accountDao.insert(principal);
 
-    // TODO account activate code 생성.
-    UUID code = UUID.randomUUID();
+    AccountActivateCode activateCode = this.accountActivateCodeService.create(account);
 
     // send email
     try {
       TemplateMessageParams msg = new TemplateEmailMessageParams(
-          new EmailAddress(accountActivateSender, accountActivateName),
-          // new EmailAddress("just.burrow@lul.kr", account.getName()),
+          new EmailAddress(this.accountActivateSender, this.accountActivateName),
           new EmailAddress(account.getEmail(), account.getName()),
-          accountActivateSubject, accountActivateTemplate,
+          this.accountActivateSubject, this.accountActivateTemplate,
           Maps.<String, Object>hashmap("account", account)
-              .put("host", accountActivateHost).put("code", code).build());
-      messageService.send(msg);
+              .put("host", this.accountActivateHost)
+              .put("code", activateCode.getCode())
+              .put("expire", activateCode.getExpire())
+              .build());
+      this.messageService.send(msg);
     } catch (MessageException e) {
       log.error(format("fail to send account activate code : account=%s", account), e);
     }
