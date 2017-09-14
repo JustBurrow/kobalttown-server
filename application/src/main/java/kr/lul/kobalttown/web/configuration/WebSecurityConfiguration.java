@@ -58,7 +58,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .permitAll();
     http.authorizeRequests()
         .antMatchers("/", "/css/**", "/js/**").permitAll()
-        .antMatchers("/signup/**", "/activate/*").anonymous()
+        .antMatchers("/signup/**", "/accounts/activate/*").anonymous()
         .anyRequest().authenticated();
 
     if (log.isTraceEnabled()) {

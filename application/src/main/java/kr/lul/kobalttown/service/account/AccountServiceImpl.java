@@ -7,6 +7,7 @@ import kr.lul.kobalttown.domain.account.AccountActivateCode;
 import kr.lul.kobalttown.domain.account.AccountPrincipal;
 import kr.lul.kobalttown.jpa.entity.AccountEntity;
 import kr.lul.kobalttown.jpa.entity.AccountPrincipalEmailEntity;
+import kr.lul.kobalttown.service.DataNotExistException;
 import kr.lul.kobalttown.service.account.params.CreateAccountParams;
 import kr.lul.kobalttown.service.message.MessageService;
 import kr.lul.kobalttown.service.message.exception.MessageException;
@@ -91,6 +92,27 @@ import static kr.lul.kobalttown.util.Asserts.*;
 
     if (log.isTraceEnabled()) {
       log.trace(format("result : account=%s", account));
+    }
+    return account;
+  }
+
+  @Override
+  public Account activate(String code) throws IllegalAccountActivateCodeException {
+    if (log.isTraceEnabled()) {
+      log.trace(format("activate args : code='%s'", code));
+    }
+
+    AccountActivateCode activateCode = this.accountActivateCodeService.read(code);
+    if (null == activateCode) {
+      throw new DataNotExistException(format("account activate code : %s", code));
+    } else if (activateCode.isUsed()) {
+      throw new IllegalAccountActivateCodeException(code, format("account activate code : %s", activateCode));
+    }
+
+    Account account = activateCode.use();
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("activate return : %s", account));
     }
     return account;
   }

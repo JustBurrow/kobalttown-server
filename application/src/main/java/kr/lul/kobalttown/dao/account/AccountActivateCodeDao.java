@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AccountActivateCodeDao {
   AccountActivateCode insert(AccountActivateCode aac);
 
+  AccountActivateCode select(String code);
+
   long count(String code);
 
   boolean isExist(Account account);

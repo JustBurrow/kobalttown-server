@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static kr.lul.kobalttown.util.Asserts.notNull;
-import static kr.lul.kobalttown.util.Asserts.positive;
+import static java.lang.String.format;
+import static kr.lul.kobalttown.util.Asserts.*;
 
 /**
  * @author justburrow
@@ -25,31 +25,46 @@ import static kr.lul.kobalttown.util.Asserts.positive;
   @Override
   public AccountActivateCode insert(AccountActivateCode aac) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("insert args : aac=%s", aac));
+      log.trace(format("insert args : aac=%s", aac));
     }
 
     if (0L < this.accountActivateCodeRepository.countByCode(aac.getCode())) {
-      throw new IllegalArgumentException(String.format("alread exist code : %s", aac.getCode()));
+      throw new IllegalArgumentException(format("alread exist code : %s", aac.getCode()));
     }
 
     aac = this.accountActivateCodeRepository.save((AccountActivateCodeEntity) aac);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("insert return : %s", aac));
+      log.trace(format("insert return : %s", aac));
     }
     return aac;
   }
 
   @Override
+  public AccountActivateCode select(String code) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("select args : code='%s'", code));
+    }
+    hasLength(code, "code");
+
+    AccountActivateCodeEntity activateCode = this.accountActivateCodeRepository.findOneByCode(code);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("select return : %s", activateCode));
+    }
+    return activateCode;
+  }
+
+  @Override
   public long count(String code) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("count args : code=%s", code));
+      log.trace(format("count args : code=%s", code));
     }
 
     long count = this.accountActivateCodeRepository.countByCode(code);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("count return : %s", code));
+      log.trace(format("count return : %s", code));
     }
     return count;
   }
@@ -57,7 +72,7 @@ import static kr.lul.kobalttown.util.Asserts.positive;
   @Override
   public boolean isExist(Account account) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("isExist args : account=%s", account));
+      log.trace(format("isExist args : account=%s", account));
     }
     notNull(account, "account");
     positive(account.getId(), "account.id");
@@ -65,7 +80,7 @@ import static kr.lul.kobalttown.util.Asserts.positive;
     boolean exists = this.accountActivateCodeRepository.existsByAccount(account);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("isExist return : %b", exists));
+      log.trace(format("isExist return : %b", exists));
     }
     return exists;
   }
@@ -73,7 +88,7 @@ import static kr.lul.kobalttown.util.Asserts.positive;
   @Override
   public void delete(Account account) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("delete args : account=%s", account));
+      log.trace(format("delete args : account=%s", account));
     }
     notNull(account, "account");
     positive(account.getId(), "account.id");

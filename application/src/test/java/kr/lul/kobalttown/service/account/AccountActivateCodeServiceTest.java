@@ -4,6 +4,7 @@ import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.domain.account.AccountActivateCode;
 import kr.lul.kobalttown.service.AbstractServiceTest;
 import kr.lul.kobalttown.service.ServicePackageTestConfiguration;
+import kr.lul.kobalttown.util.AssertionException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
+import static kr.lul.kobalttown.domain.account.AccountActivateCode.TTL;
 import static kr.lul.kobalttown.util.RandomUtil.R;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author justburrow
@@ -34,6 +37,14 @@ public class AccountActivateCodeServiceTest extends AbstractServiceTest {
     super.setUp();
 
     assertThat(this.accountActivateCodeService).isNotNull();
+  }
+
+  @Test
+  public void testCreateWithNull() throws Exception {
+    assertThatThrownBy(() -> this.accountActivateCodeService.create(null))
+        .isNotNull()
+        .isInstanceOf(AssertionException.class)
+        .hasMessageContaining("account");
   }
 
   /**
@@ -60,7 +71,7 @@ public class AccountActivateCodeServiceTest extends AbstractServiceTest {
         .isGreaterThan(0L);
     assertThat(code.getExpire())
         .isNotNull()
-        .isAfterOrEqualTo(this.before.plusMillis(AccountActivateCode.TTL));
+        .isAfterOrEqualTo(timestamp.plusMillis(TTL));
     assertThat(code.getCreate())
         .isNotNull()
         .isAfterOrEqualTo(timestamp)

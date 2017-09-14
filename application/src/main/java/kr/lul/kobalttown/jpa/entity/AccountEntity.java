@@ -71,6 +71,14 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
   }
 
   @Override
+  public void enable() {
+    if (this.enabled) {
+      throw new IllegalStateException("already enabled.");
+    }
+    this.enabled = true;
+  }
+
+  @Override
   public int hashCode() {
     return Objects.hashCode(this.id);
   }

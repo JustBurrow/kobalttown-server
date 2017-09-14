@@ -15,4 +15,6 @@ public interface Account extends Updatable {
   String getName();
 
   boolean isEnable();
+
+  void enable();
 }

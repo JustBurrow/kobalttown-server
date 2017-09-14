@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.time.Instant;
 import java.util.Objects;
 
+import static java.lang.String.format;
 import static kr.lul.kobalttown.util.Asserts.*;
 
 /**
@@ -47,7 +48,7 @@ public class AccountActivateCodeEntity extends AbstractUpdatableEntity implement
     positive(account.getId(), "account.id");
     notNull(account.getCreate(), "account.create");
     notNull(account.getUpdate(), "account.update");
-    length(code, CODE_LENGTH, "code");
+    matches(code, CODE_PATTERN, "code");
     notNull(expire, "expire");
 
     this.account = account;
@@ -91,6 +92,18 @@ public class AccountActivateCodeEntity extends AbstractUpdatableEntity implement
   @Override
   public Instant getUsed() {
     return this.used;
+  }
+
+  @Override
+  public Account use() {
+    if (null != this.used) {
+      throw new IllegalStateException(format("already used at %s", this.used));
+    }
+
+    this.used = Instant.now();
+    this.account.enable();
+
+    return this.account;
   }
 
   @Override

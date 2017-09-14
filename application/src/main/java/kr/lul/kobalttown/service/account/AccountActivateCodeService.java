@@ -17,4 +17,10 @@ public interface AccountActivateCodeService {
    * @return
    */
   AccountActivateCode create(Account account);
+
+  /**
+   * @param code
+   * @return
+   */
+  AccountActivateCode read(String code);
 }

@@ -11,4 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface AccountService {
   Account create(CreateAccountParams params);
+
+  Account activate(String code) throws IllegalAccountActivateCodeException;
 }
