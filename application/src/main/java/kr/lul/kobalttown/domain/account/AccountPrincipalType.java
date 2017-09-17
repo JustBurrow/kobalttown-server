@@ -5,5 +5,5 @@ package kr.lul.kobalttown.domain.account;
  * @since 2017. 8. 18.
  */
 public enum AccountPrincipalType {
-  EMAIL_PASSWORD;
+  EMAIL_PASSWORD
 }
