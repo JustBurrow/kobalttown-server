@@ -30,7 +30,7 @@ public class AccountMicroserviceLuncher {
 
     if (log.isTraceEnabled()) {
       for (String name : context.getBeanDefinitionNames()) {
-        log.trace(format("bean=%s", name));
+        log.trace(format("bean : %s=%s", name, context.getBean(name)));
       }
     }
   }

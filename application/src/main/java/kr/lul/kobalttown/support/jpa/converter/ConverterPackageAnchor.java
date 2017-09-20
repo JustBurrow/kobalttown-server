@@ -1,4 +1,4 @@
-package kr.lul.kobalttown.jpa.support.converter;
+package kr.lul.kobalttown.support.jpa.converter;
 
 import kr.lul.kobalttown.util.Anchor;
 

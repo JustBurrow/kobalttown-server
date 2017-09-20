@@ -1,7 +1,6 @@
-package kr.lul.kobalttown.ms.support.web;
+package kr.lul.kobalttown.support.web;
 
-import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
-import kr.lul.kobalttown.ms.support.security.AuthUser;
+import kr.lul.kobalttown.support.security.AuthUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
@@ -27,39 +26,44 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
     if (log.isTraceEnabled()) {
-      log.trace(format("args : parameter=%s", parameter));
+      log.trace(format("supportsParameter args : parameter=%s", parameter));
     }
 
-    boolean result = AccountDto.class.equals(parameter.getParameterType());
-    result &= "currentAccount".equals(parameter.getParameterName());
+    boolean result = AuthUser.class.equals(parameter.getParameterType());
+    result &= "operator".equals(parameter.getParameterName());
 
     if (log.isTraceEnabled()) {
-      log.trace(format("result : support=%b", result));
+      log.trace(format("supportsParameter return : %b", result));
     }
     return result;
   }
 
   @Override
   public Object resolveArgument(MethodParameter param, ModelAndViewContainer mav, NativeWebRequest req, WebDataBinderFactory binder) throws Exception {
+    if (log.isTraceEnabled()) {
+      log.trace(format("resolveArgument args : param=%s, mav=%s, req=%s, binder=%s", param, mav, req, binder));
+    }
+
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication instanceof AnonymousAuthenticationToken) {
       if (log.isTraceEnabled()) {
-        log.trace("return : null");
+        log.trace("resolveArgument return : null");
       }
       return null;
     }
 
     Object principal = authentication.getPrincipal();
-    if (!(principal instanceof AuthUser)) {
-      return null;
+    if (log.isTraceEnabled()) {
+      log.trace(format("principal=%s", principal));
     }
 
-    AuthUser   auth    = (AuthUser) principal;
-    AccountDto account = new AccountDto(auth.getId(), auth.getEmail(), auth.getName(), auth.isEnabled());
-    if (log.isTraceEnabled()) {
-      log.trace(format("result : principal=%s, account=%s", principal, account));
-      log.trace(format("return : %s", account));
+    if (principal instanceof AuthUser) {
+      return principal;
+    } else {
+      if (log.isInfoEnabled()) {
+        log.info(format("principal type : principal=%s, authentication=%s", principal, authentication));
+      }
+      return null;
     }
-    return account;
   }
 }

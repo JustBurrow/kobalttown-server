@@ -2,7 +2,7 @@ package kr.lul.kobalttown.business.configuration;
 
 import kr.lul.kobalttown.jpa.account.AccountJpaAnchor;
 import kr.lul.kobalttown.jpa.account.repository.AccountRepositoryPackageAnchor;
-import kr.lul.kobalttown.jpa.support.JpaSupportPackageAnchor;
+import kr.lul.kobalttown.support.jpa.JpaSupportPackageAnchor;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;

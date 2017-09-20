@@ -2,7 +2,7 @@ package kr.lul.kobalttown.jpa.account.entity;
 
 import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.domain.account.AccountPrincipal;
-import kr.lul.kobalttown.jpa.support.entity.AbstractCreatableEntity;
+import kr.lul.kobalttown.support.jpa.entity.AbstractCreatableEntity;
 
 import javax.persistence.*;
 import java.time.Instant;

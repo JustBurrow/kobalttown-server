@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.ms.account.web.configuration;
 
 import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalEmailRepository;
-import kr.lul.kobalttown.ms.support.security.AuthUserService;
+import kr.lul.kobalttown.support.security.AuthUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

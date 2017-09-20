@@ -2,8 +2,8 @@ package kr.lul.kobalttown.ms.account.web.controller;
 
 import kr.lul.kobalttown.ms.account.borderline.AccountBorderline;
 import kr.lul.kobalttown.ms.account.borderline.cmd.CreateAccountCmd;
-import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
 import kr.lul.kobalttown.ms.account.web.controller.req.SignupReq;
+import kr.lul.kobalttown.support.security.AuthUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +28,26 @@ import static java.lang.String.format;
   private AccountBorderline accountBorderline;
 
   @Override
-  public String index(final AccountDto currentAccount, final Model model) {
+  public String index(final AuthUser operator, final Model model) {
     if (log.isTraceEnabled()) {
-      log.trace(format("args : currentAccount=%s, model=%s", currentAccount, model));
+      log.trace(format("index args : operator=%s, model=%s", operator, model));
     }
 
-    if (null == currentAccount) {
-      return "index";
-    }
+    String template = null == operator
+        ? indexGuest(model)
+        : indexOperator(operator, model);
 
-    model.addAttribute("currentAccount", currentAccount);
     if (log.isTraceEnabled()) {
-      log.trace(format("result : model=%s", model));
+      log.trace(format("index result : template=%s, model=%s", template, model));
     }
+    return template;
+  }
+
+  private String indexGuest(final Model model) {
+    return "index";
+  }
+
+  private String indexOperator(final AuthUser operator, final Model model) {
     return "dashboard";
   }
 

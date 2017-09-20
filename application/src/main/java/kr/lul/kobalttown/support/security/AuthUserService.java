@@ -1,8 +1,7 @@
-package kr.lul.kobalttown.ms.support.security;
+package kr.lul.kobalttown.support.security;
 
 import kr.lul.kobalttown.domain.account.AccountPrincipal;
 import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalEmailRepository;
-import kr.lul.kobalttown.util.Asserts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,7 +37,7 @@ public class AuthUserService implements UserDetailsService {
     AccountPrincipal principal = this.accountPrincipalEmailRepository.findOneByEmail(userKey);
     if (null == principal) {
       UsernameNotFoundException e = new UsernameNotFoundException(userKey);
-      log.trace(format("account does not exist. userKey=%s", userKey), e);
+      log.info(format("account does not exist. userKey=%s", userKey), e);
       throw e;
     }
 

@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.ms.account.web.controller;
 
-import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
 import kr.lul.kobalttown.ms.account.web.controller.req.SignupReq;
+import kr.lul.kobalttown.support.security.AuthUser;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping
 public interface IndexController {
   @GetMapping
-  String index(final AccountDto currentAccount, final Model model);
+  String index(final AuthUser operator, final Model model);
 
   @PostMapping("/signup")
   String signup(SignupReq req, final BindingResult binding, final Model model);

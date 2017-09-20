@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.jpa.account.entity;
 
 import kr.lul.kobalttown.domain.account.Account;
-import kr.lul.kobalttown.jpa.support.entity.AbstractUpdatableEntity;
+import kr.lul.kobalttown.support.jpa.entity.AbstractUpdatableEntity;
 
 import javax.persistence.*;
 import java.time.Instant;

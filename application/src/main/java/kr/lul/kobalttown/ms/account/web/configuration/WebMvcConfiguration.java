@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.ms.account.web.configuration;
 
 import kr.lul.kobalttown.ms.account.configuration.Constants.Properties;
-import kr.lul.kobalttown.ms.support.web.AuthUserArgumentResolver;
+import kr.lul.kobalttown.support.web.AuthUserArgumentResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
