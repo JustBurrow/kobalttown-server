@@ -25,21 +25,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AccountServicePackageTestConfiguration.class)
 @Transactional
-public class AccountActivateCodeServiceTest extends AbstractAccountServiceTest {
+public class AccountCodeServiceTest extends AbstractAccountServiceTest {
   @Autowired
-  private AccountActivateCodeService accountActivateCodeService;
+  private AccountCodeService accountCodeService;
 
   @Override
   @Before
   public void setUp() throws Exception {
     super.setUp();
 
-    assertThat(this.accountActivateCodeService).isNotNull();
+    assertThat(this.accountCodeService).isNotNull();
   }
 
   @Test
   public void testCreateWithNull() throws Exception {
-    assertThatThrownBy(() -> this.accountActivateCodeService.create(null))
+    assertThatThrownBy(() -> this.accountCodeService.createAcitivateCode(null))
         .isNotNull()
         .isInstanceOf(AssertionException.class)
         .hasMessageContaining("account");
@@ -58,7 +58,7 @@ public class AccountActivateCodeServiceTest extends AbstractAccountServiceTest {
     // When
     Thread.sleep(R.positive(2000L));
     final Instant             timestamp = this.timeProvider.now();
-    final AccountActivateCode code      = this.accountActivateCodeService.create(account);
+    final AccountActivateCode code      = this.accountCodeService.createAcitivateCode(account);
 
     // Then
     assertThat(code)

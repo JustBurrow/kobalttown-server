@@ -44,11 +44,11 @@ import static kr.lul.kobalttown.util.Asserts.*;
   private String accountActivateHost;
 
   @Autowired
-  private AccountActivateCodeService accountActivateCodeService;
+  private AccountCodeService accountCodeService;
   @Autowired
-  private AccountDao                 accountDao;
+  private AccountDao         accountDao;
   @Autowired
-  private MessageService             messageService;
+  private MessageService     messageService;
 
   @Autowired
   private EmailService emailService;
@@ -72,7 +72,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
     AccountPrincipal principal = new AccountPrincipalEmailEntity(account, params.getEmail(), params.getPassword());
     principal = this.accountDao.insert(principal);
 
-    AccountActivateCode activateCode = this.accountActivateCodeService.create(account);
+    AccountActivateCode activateCode = this.accountCodeService.createAcitivateCode(account);
 
     // send email
     try {
@@ -102,7 +102,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
       log.trace(format("activate args : code='%s'", code));
     }
 
-    AccountActivateCode activateCode = this.accountActivateCodeService.read(code);
+    AccountActivateCode activateCode = this.accountCodeService.readActivateCode(code);
     if (null == activateCode) {
       throw new DataNotExistException(format("account activate code : %s", code));
     } else if (activateCode.isUsed()) {

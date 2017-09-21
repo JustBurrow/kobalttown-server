@@ -62,8 +62,8 @@ import static java.lang.String.format;
       return "index";
     }
 
-    CreateAccountCmd cmd = new CreateAccountCmd(req.getEmail(), req.getName(),
-                                                this.passwordEncoder.encode(req.getPassword()));
+    CreateAccountCmd cmd = new CreateAccountCmd(
+        req.getEmail(), req.getName(), this.passwordEncoder.encode(req.getPassword()));
     this.accountBorderline.create(cmd);
 
     return "redirect:/";
