@@ -1,8 +1,8 @@
 package kr.lul.kobalttown.business.account.service;
 
-import it.ozimov.springboot.mail.service.EmailService;
 import kr.lul.kobalttown.business.account.dao.AccountDao;
 import kr.lul.kobalttown.business.account.service.params.CreateAccountParams;
+import kr.lul.kobalttown.business.account.service.params.UpdatePrincipalParams;
 import kr.lul.kobalttown.business.exception.DataNotExistException;
 import kr.lul.kobalttown.business.message.exception.MessageException;
 import kr.lul.kobalttown.business.message.service.MessageService;
@@ -15,11 +15,11 @@ import kr.lul.kobalttown.domain.account.AccountPrincipal;
 import kr.lul.kobalttown.jpa.account.entity.AccountEntity;
 import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEmailEntity;
 import kr.lul.kobalttown.util.Maps;
-import kr.lul.kobalttown.util.TimeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static java.lang.String.format;
@@ -49,11 +49,8 @@ import static kr.lul.kobalttown.util.Asserts.*;
   private AccountDao         accountDao;
   @Autowired
   private MessageService     messageService;
-
   @Autowired
-  private EmailService emailService;
-  @Autowired
-  private TimeProvider timeProvider;
+  private PasswordEncoder    passwordEncoder;
 
   @Override
   public Account create(CreateAccountParams params) {
@@ -69,9 +66,11 @@ import static kr.lul.kobalttown.util.Asserts.*;
     Account account = new AccountEntity(params.getEmail(), params.getName());
     account = this.accountDao.insert(account);
 
+    // save login info
     AccountPrincipal principal = new AccountPrincipalEmailEntity(account, params.getEmail(), params.getPassword());
     principal = this.accountDao.insert(principal);
 
+    // save activate code
     AccountActivateCode activateCode = this.accountCodeService.createAcitivateCode(account);
 
     // send email
@@ -115,5 +114,36 @@ import static kr.lul.kobalttown.util.Asserts.*;
       log.trace(format("activate return : %s", account));
     }
     return account;
+  }
+
+  @Override
+  public Account update(UpdatePrincipalParams params) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("update args : params=%s", params));
+    }
+
+    // validation
+    AccountPrincipal old = this.accountDao.selectPrincipal(params.getType(), params.getOperator());
+    if (null == old) {
+      throw new DataNotExistException(
+          format("principal does not exist : account=%s", params.getOperator().toSimpleString()));
+      // } else if (!old.getAccount().isEnable()) { // TODO 테스트용 계정 유틸리티에 임의의 활성화된 계정을 만드는 유틸리티 추가.
+      //   throw new AccountStateException("account is disable.");
+    } else if (!old.getPublicKey().equals(params.getPublicKey())) {
+      throw new IllegalArgumentException(format("public key does not match : expected=%s", params.getPublicKey()));
+    } else if (!this.passwordEncoder.matches(params.getOldPrivateKey(), old.getPrivateKey())) {
+      throw new IllegalArgumentException("private key does not match.");
+    }
+
+    // 삭제 & 저장
+    this.accountDao.delete(old);
+    AccountPrincipal principal = new AccountPrincipalEmailEntity(params.getOperator(), params.getPublicKey(),
+                                                                 params.getNewPrivateKey());
+    principal = this.accountDao.insert(principal);
+
+    if (log.isTraceEnabled()) {
+      log.trace(String.format("update result : principal=%s", principal));
+    }
+    return principal.getAccount();
   }
 }

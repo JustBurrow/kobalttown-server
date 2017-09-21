@@ -18,18 +18,22 @@ public abstract class AccountServiceTestUtils {
   private static final Logger log = LoggerFactory.getLogger(AccountServiceTestUtils.class);
 
   public static Account random(PasswordEncoder passwordEncoder, AccountService service) {
+    return random(passwordEncoder, service, randomAlphanumeric(4, 30));
+  }
+
+  public static Account random(PasswordEncoder passwordEncoder, AccountService service, String password) {
     if (log.isTraceEnabled()) {
-      log.trace(format("random args : passwordEncoder=%s, service=%s", passwordEncoder, service));
+      log.trace(format("random args : passwordEncoder=%s, service=%s, password=%s",
+                       passwordEncoder, service, password));
     }
 
     String email;
     do {
       email = EmailUtils.random();
     } while (Account.EMAIL_MAX_LENGTH < email.length());
-    String name     = randomAlphanumeric(2, Account.NAME_MAX_LENGTH + 1);
-    String password = passwordEncoder.encode(randomAlphanumeric(1, 20));
+    String name = randomAlphanumeric(2, Account.NAME_MAX_LENGTH + 1);
 
-    Account account = service.create(new CreateAccountParams(email, name, password));
+    Account account = service.create(new CreateAccountParams(email, name, passwordEncoder.encode(password)));
 
     if (log.isTraceEnabled()) {
       log.trace(format("random return : %s", account));

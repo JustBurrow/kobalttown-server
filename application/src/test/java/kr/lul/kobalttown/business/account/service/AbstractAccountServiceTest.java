@@ -34,4 +34,8 @@ public class AbstractAccountServiceTest {
   protected Account randomAccount() {
     return AccountServiceTestUtils.random(this.passwordEncoder, this.accountService);
   }
+
+  protected Account randomAccount(String password) {
+    return AccountServiceTestUtils.random(this.passwordEncoder, this.accountService, password);
+  }
 }

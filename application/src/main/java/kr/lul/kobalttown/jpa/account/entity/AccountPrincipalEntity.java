@@ -8,8 +8,7 @@ import javax.persistence.*;
 import java.time.Instant;
 import java.util.Objects;
 
-import static kr.lul.kobalttown.util.Asserts.hasLength;
-import static kr.lul.kobalttown.util.Asserts.notNull;
+import static kr.lul.kobalttown.util.Asserts.*;
 
 /**
  * @author justburrow
@@ -23,11 +22,11 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     })
 @DiscriminatorColumn(name = "principal_type", discriminatorType = DiscriminatorType.INTEGER)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class AbstractAccountPrincipalEntity extends AbstractCreatableEntity implements AccountPrincipal {
+public abstract class AccountPrincipalEntity extends AbstractCreatableEntity implements AccountPrincipal {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false, unique = true, insertable = false, updatable = false)
-  private long    id;
+  private   long    id;
   @OneToOne(targetEntity = AccountEntity.class)
   @JoinColumn(name = "account",
       unique = true,
@@ -35,29 +34,33 @@ public abstract class AbstractAccountPrincipalEntity extends AbstractCreatableEn
       updatable = false,
       foreignKey = @ForeignKey(name = "FK_ACCOUNT_PRINCIPAL_PK_ACCOUNT"),
       referencedColumnName = "id")
-  private Account account;
+  private   Account account;
   @Column(name = "public_key", nullable = false, updatable = false)
-  private String  publicKey;
+  protected String  publicKey;
   @Column(name = "private_key", nullable = false, updatable = false)
-  private String  privateKey;
+  protected String  privateKey;
 
-  protected AbstractAccountPrincipalEntity() {
+  protected AccountPrincipalEntity() {
   }
 
-  protected AbstractAccountPrincipalEntity(Account account, String publicKey, String privateKey) {
+  protected AccountPrincipalEntity(Account account, String publicKey, String privateKey) {
     notNull(account, "account");
     hasLength(publicKey, "publicKey");
-    hasLength(privateKey, "privateKey");
+    bcrypt(privateKey, "privateKey");
 
     this.account = account;
-    this.publicKey = publicKey;
-    this.privateKey = privateKey;
+    setPublicKey(publicKey);
+    setPrivateKey(privateKey);
   }
 
   @PrePersist
   private void prePersist() throws Exception {
     setCreate(Instant.now());
   }
+
+  abstract void setPublicKey(String publicKey);
+
+  abstract void setPrivateKey(String privateKey);
 
   @Override
   public long getId() {
@@ -87,8 +90,8 @@ public abstract class AbstractAccountPrincipalEntity extends AbstractCreatableEn
 
   @Override
   public boolean equals(Object obj) {
-    if (0L < this.id && null != obj && obj instanceof AbstractAccountPrincipalEntity) {
-      return this.id == ((AbstractAccountPrincipalEntity) obj).id;
+    if (0L < this.id && null != obj && obj instanceof AccountPrincipalEntity) {
+      return this.id == ((AccountPrincipalEntity) obj).id;
     } else {
       return false;
     }
@@ -99,8 +102,8 @@ public abstract class AbstractAccountPrincipalEntity extends AbstractCreatableEn
     return new StringBuffer(AccountPrincipalEmailEntity.class.getSimpleName())
         .append("{id=").append(this.id)
         .append(", type=").append(getType())
-        .append(", publicKey='").append(this.publicKey).append("\', privateKey=[ PROTECTED ]")
-        .append(", account=").append(this.account)
+        .append(", publicKey='").append(this.publicKey).append('\'')
+        .append(", privateKey=[ PROTECTED ], account=").append(this.account)
         .append(", create=").append(getCreate())
         .append('}').toString();
   }

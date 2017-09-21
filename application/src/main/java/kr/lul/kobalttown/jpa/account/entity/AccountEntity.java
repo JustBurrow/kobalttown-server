@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.time.Instant;
 import java.util.Objects;
 
+import static java.lang.String.format;
 import static kr.lul.kobalttown.util.Asserts.shorter;
 
 /**
@@ -76,6 +77,11 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
       throw new IllegalStateException("already enabled.");
     }
     this.enabled = true;
+  }
+
+  @Override
+  public String toSimpleString() {
+    return format("%d:%s<%s>", this.id, this.name, this.email);
   }
 
   @Override

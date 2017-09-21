@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import static kr.lul.kobalttown.domain.account.AccountActivateCode.CODE_PATTERN;
 
 /**
+ * TODO 활성화 하지 않은 계정의 활성화 코드 신규 발급.
+ *
  * @author justburrow
  * @since 2017. 9. 13.
  */

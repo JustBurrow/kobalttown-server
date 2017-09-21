@@ -3,8 +3,8 @@ package kr.lul.kobalttown.business.account.dao;
 import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.domain.account.AccountPrincipal;
 import kr.lul.kobalttown.domain.account.AccountPrincipalType;
-import kr.lul.kobalttown.jpa.account.entity.AbstractAccountPrincipalEntity;
 import kr.lul.kobalttown.jpa.account.entity.AccountEntity;
+import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEntity;
 import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalRepository;
 import kr.lul.kobalttown.jpa.account.repository.AccountRepository;
 import kr.lul.kobalttown.util.IllegalConfigurationException;
@@ -76,11 +76,42 @@ import static kr.lul.kobalttown.util.Asserts.*;
 
     principal = (AccountPrincipal) this.accountPrincipalRepositoryMap
         .get(principal.getType())
-        .save((AbstractAccountPrincipalEntity) principal);
+        .save((AccountPrincipalEntity) principal);
 
     if (log.isTraceEnabled()) {
       log.trace(format("return=%s", principal));
     }
     return principal;
   }
+
+  @Override
+  public AccountPrincipal selectPrincipal(AccountPrincipalType type, Account account) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("selectPrincipal args : account=%s", account));
+    }
+    notNull(type, "type");
+    notNull(account, "account");
+    assignable(account, AccountEntity.class, "account");
+
+    AccountPrincipalEntity principal = this.accountPrincipalRepositoryMap
+        .get(type)
+        .findOneByAccount((AccountEntity) account);
+
+    if (log.isTraceEnabled()) {
+      log.trace(String.format("selectPrincipal return : %s", principal));
+    }
+    return principal;
+  }
+
+  @Override
+  public void delete(AccountPrincipal principal) {
+    if (log.isTraceEnabled()) {
+      log.trace(String.format("delete args : principal=%s", principal));
+    }
+
+    AccountPrincipalRepository repository = this.accountPrincipalRepositoryMap.get(principal.getType());
+    repository.delete(principal);
+    repository.flush();
+  }
 }
+

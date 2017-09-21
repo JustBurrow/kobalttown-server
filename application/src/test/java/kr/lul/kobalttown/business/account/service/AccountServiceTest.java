@@ -1,10 +1,12 @@
 package kr.lul.kobalttown.business.account.service;
 
 import kr.lul.kobalttown.business.account.service.params.CreateAccountParams;
-import kr.lul.kobalttown.domain.account.Account;
-import kr.lul.kobalttown.domain.account.AccountActivateCode;
+import kr.lul.kobalttown.business.account.service.params.UpdatePrincipalParams;
+import kr.lul.kobalttown.domain.account.*;
 import kr.lul.kobalttown.jpa.account.entity.AccountActivateCodeEntity;
+import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEntity;
 import kr.lul.kobalttown.jpa.account.repository.AccountActivateCodeRepository;
+import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalEmailRepository;
 import kr.lul.kobalttown.util.AssertionException;
 import kr.lul.kobalttown.util.EmailUtils;
 import org.junit.Before;
@@ -15,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
 
 import static kr.lul.kobalttown.util.RandomUtil.R;
 import static org.apache.commons.lang3.RandomStringUtils.random;
@@ -32,12 +36,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Rollback
 public class AccountServiceTest extends AbstractAccountServiceTest {
   @Autowired
-  private AccountActivateCodeRepository accountActivateCodeRepository;
+  private AccountActivateCodeRepository   accountActivateCodeRepository;
+  @Autowired
+  private AccountPrincipalEmailRepository accountPrincipalEmailRepository;
 
   @Override
   @Before
   public void setUp() throws Exception {
     super.setUp();
+
+    assertThat(this.accountActivateCodeRepository).isNotNull();
+    assertThat(this.accountPrincipalEmailRepository).isNotNull();
   }
 
   @Test
@@ -123,5 +132,43 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
             new CreateAccountParams(email, randomAlphanumeric(2, 20),
                                     this.passwordEncoder.encode(random(R.in(1, 20))))
         )).isNotNull();
+  }
+
+  @Test
+  public void testUpdateEmailPassword() throws Exception {
+    // Given
+    final String                oldPassword = randomAlphanumeric(10);
+    final Account               account     = randomAccount(oldPassword);
+    final long                  accountId   = account.getId();
+    final AccountPrincipalEmail old         = this.accountPrincipalEmailRepository.findOneByEmail(account.getEmail());
+    final String                newPassword = this.passwordEncoder.encode(randomAlphanumeric(4, 20));
+    final UpdatePrincipalParams params      = new UpdatePrincipalParams(account);
+    params.setType(AccountPrincipalType.EMAIL_PASSWORD);
+    params.setPublicKey(account.getEmail());
+    params.setOldPrivateKey(oldPassword);
+    params.setNewPrivateKey(newPassword);
+
+    Thread.sleep(R.in(100L, 2000L));
+    final Instant timestamp = this.timeProvider.now();
+
+    // When
+    final Account actual = this.accountService.update(params);
+
+    // Then
+    final AccountPrincipalEntity principal = this.accountPrincipalEmailRepository.findOneByEmail(account.getEmail());
+
+    assertThat(actual)
+        .isNotNull()
+        .extracting(Account::getId, Account::getCreate)
+        .containsExactly(accountId, account.getCreate());
+
+    assertThat(principal)
+        .isNotNull()
+        .extracting(AccountPrincipal::getAccount, AccountPrincipal::getPublicKey, AccountPrincipal::getPrivateKey)
+        .containsExactly(account, account.getEmail(), newPassword);
+    assertThat(principal.getId())
+        .isGreaterThan(old.getId());
+    assertThat(principal.getCreate())
+        .isAfterOrEqualTo(timestamp);
   }
 }
