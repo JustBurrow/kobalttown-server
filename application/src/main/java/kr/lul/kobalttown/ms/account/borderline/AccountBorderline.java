@@ -1,8 +1,9 @@
 package kr.lul.kobalttown.ms.account.borderline;
 
-import kr.lul.kobalttown.business.account.service.IllegalAccountActivateCodeException;
+import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.ms.account.borderline.cmd.CreateAccountCmd;
 import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
+import kr.lul.kobalttown.util.Lazy;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -11,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 public interface AccountBorderline {
-  AccountDto create(CreateAccountCmd cmd);
+  Lazy<AccountDto> create(CreateAccountCmd cmd);
 
-  AccountDto activate(String code) throws IllegalAccountActivateCodeException;
+  Lazy<AccountDto> read(long id);
+
+  Lazy<AccountDto> activate(String code) throws IllegalAccountActivateCodeException;
 }

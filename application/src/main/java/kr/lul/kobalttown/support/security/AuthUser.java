@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.support.security;
 
 import kr.lul.kobalttown.domain.account.AccountPrincipal;
-import kr.lul.kobalttown.domain.account.SimpleAccount;
+import kr.lul.kobalttown.domain.account.AccountSimple;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +14,7 @@ import static java.util.Arrays.asList;
  * @author justburrow
  * @since 2017. 8. 7.
  */
-public class AuthUser extends SimpleAccount implements UserDetails {
+public class AuthUser extends AccountSimple implements UserDetails {
   private String  password;
   private boolean enabled;
 

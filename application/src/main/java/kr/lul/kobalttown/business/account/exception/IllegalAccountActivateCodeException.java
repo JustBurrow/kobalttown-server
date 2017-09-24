@@ -1,8 +1,6 @@
-package kr.lul.kobalttown.business.account.service;
+package kr.lul.kobalttown.business.account.exception;
 
 /**
- * TODO 패키지 이동.
- *
  * @author justburrow
  * @since 2017. 9. 13.
  */

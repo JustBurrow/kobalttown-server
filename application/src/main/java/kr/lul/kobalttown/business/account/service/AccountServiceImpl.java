@@ -1,6 +1,7 @@
 package kr.lul.kobalttown.business.account.service;
 
 import kr.lul.kobalttown.business.account.dao.AccountDao;
+import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.business.account.service.params.CreateAccountParams;
 import kr.lul.kobalttown.business.account.service.params.UpdatePrincipalParams;
 import kr.lul.kobalttown.business.exception.DataNotExistException;
@@ -96,6 +97,21 @@ import static kr.lul.kobalttown.util.Asserts.*;
   }
 
   @Override
+  public Account read(long id) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("read args : id=%d", id));
+    }
+    positive(id, "id");
+
+    Account account = this.accountDao.select(id);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("read return : %s", account));
+    }
+    return account;
+  }
+
+  @Override
   public Account activate(String code) throws IllegalAccountActivateCodeException {
     if (log.isTraceEnabled()) {
       log.trace(format("activate args : code='%s'", code));
@@ -142,7 +158,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
     principal = this.accountDao.insert(principal);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("update result : principal=%s", principal));
+      log.trace(format("update result : principal=%s", principal));
     }
     return principal.getAccount();
   }

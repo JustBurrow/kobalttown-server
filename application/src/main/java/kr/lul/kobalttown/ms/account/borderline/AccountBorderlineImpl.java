@@ -1,11 +1,13 @@
 package kr.lul.kobalttown.ms.account.borderline;
 
+import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.business.account.service.AccountService;
-import kr.lul.kobalttown.business.account.service.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.business.account.service.params.CreateAccountParams;
 import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.ms.account.borderline.cmd.CreateAccountCmd;
+import kr.lul.kobalttown.ms.account.borderline.converter.AccountConverter;
 import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
+import kr.lul.kobalttown.util.Lazy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,37 +24,51 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
   private static final Logger log = LoggerFactory.getLogger(AccountBorderline.class);
 
   @Autowired
-  private AccountService accountService;
+  private AccountService   accountService;
+  @Autowired
+  private AccountConverter accountConverter;
 
   @Override
-  public AccountDto create(CreateAccountCmd cmd) {
+  public Lazy<AccountDto> create(CreateAccountCmd cmd) {
     if (log.isTraceEnabled()) {
-      log.trace(format("args : cmd=%s", cmd));
+      log.trace(format("create args : cmd=%s", cmd));
     }
     notNull(cmd, "cmd");
 
     CreateAccountParams params  = new CreateAccountParams(cmd.getEmail(), cmd.getName(), cmd.getPassword());
     Account             account = this.accountService.create(params);
 
-    AccountDto dto = new AccountDto(account);
     if (log.isTraceEnabled()) {
-      log.trace(format("result : dto=%s", dto));
+      log.trace(format("create result : account=%s", account));
     }
-    return dto;
+    return () -> this.accountConverter.convert(account, AccountDto.class);
   }
 
   @Override
-  public AccountDto activate(String code) throws IllegalAccountActivateCodeException {
+  public Lazy<AccountDto> read(long id) {
+    if (log.isTraceEnabled()) {
+      log.trace(String.format("read args : id=%d", id));
+    }
+
+    Account account = this.accountService.read(id);
+
+    if (log.isTraceEnabled()) {
+      log.trace(String.format("read result : account=%s", account));
+    }
+    return () -> this.accountConverter.convert(account, AccountDto.class);
+  }
+
+  @Override
+  public Lazy<AccountDto> activate(String code) throws IllegalAccountActivateCodeException {
     if (log.isTraceEnabled()) {
       log.trace(format("activate args : code='%s'", code));
     }
 
-    Account    account = this.accountService.activate(code);
-    AccountDto dto     = new AccountDto(account);
+    Account account = this.accountService.activate(code);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("activate return : %s", dto));
+      log.trace(String.format("activate result : account=%s", account));
     }
-    return dto;
+    return () -> this.accountConverter.convert(account, AccountDto.class);
   }
 }

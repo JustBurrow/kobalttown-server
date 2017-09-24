@@ -2,6 +2,8 @@ package kr.lul.kobalttown.util;
 
 import java.time.*;
 
+import static kr.lul.kobalttown.util.Asserts.notNull;
+
 /**
  * {@link java.time} 패키지 유틸리티.
  *
@@ -49,5 +51,15 @@ public interface TimeProvider {
 
   default LocalDateTime localDateTime() {
     return zonedDateTime().toLocalDateTime();
+  }
+
+  default LocalDateTime localDateTime(Instant instant) {
+    notNull(instant, "instant");
+    return instant.atZone(zoneId()).toLocalDateTime();
+  }
+
+  default ZonedDateTime zonedDateTime(Instant instant) {
+    notNull(instant, "instant");
+    return instant.atZone(zoneId());
   }
 }

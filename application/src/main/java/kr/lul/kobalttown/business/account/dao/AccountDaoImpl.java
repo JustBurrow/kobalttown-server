@@ -67,6 +67,20 @@ import static kr.lul.kobalttown.util.Asserts.*;
   }
 
   @Override
+  public Account select(long id) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("select args : id=%d", id));
+    }
+
+    Account account = this.accountRepository.findOne(id);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("select return : %s", account));
+    }
+    return account;
+  }
+
+  @Override
   public AccountPrincipal insert(AccountPrincipal principal) {
     if (log.isTraceEnabled()) {
       log.trace(format("args : principal=%s", principal));
@@ -98,7 +112,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
         .findOneByAccount((AccountEntity) account);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("selectPrincipal return : %s", principal));
+      log.trace(format("selectPrincipal return : %s", principal));
     }
     return principal;
   }
@@ -106,7 +120,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
   @Override
   public void delete(AccountPrincipal principal) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("delete args : principal=%s", principal));
+      log.trace(format("delete args : principal=%s", principal));
     }
 
     AccountPrincipalRepository repository = this.accountPrincipalRepositoryMap.get(principal.getType());

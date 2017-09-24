@@ -4,6 +4,7 @@ import kr.lul.kobalttown.ms.account.borderline.cmd.CreateAccountCmd;
 import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
 import kr.lul.kobalttown.util.AssertionException;
 import kr.lul.kobalttown.util.EmailUtils;
+import kr.lul.kobalttown.util.TimeProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,15 +31,17 @@ public class AccountBorderlineTest {
 
   @Autowired
   private PasswordEncoder passwordEncoder;
+  @Autowired
+  private TimeProvider    timeProvider;
 
-  private Instant before;
+  private ZonedDateTime before;
 
   @Before
   public void setUp() throws Exception {
     assertThat(this.accountBorderline).isNotNull();
     assertThat(this.passwordEncoder).isNotNull();
 
-    this.before = Instant.now();
+    this.before = this.timeProvider.zonedDateTime();
   }
 
   @Test
@@ -57,7 +60,7 @@ public class AccountBorderlineTest {
         email, name, this.passwordEncoder.encode(randomAlphanumeric(4, 20)));
 
     // When
-    final AccountDto dto = this.accountBorderline.create(cmd);
+    final AccountDto dto = this.accountBorderline.create(cmd).val();
 
     // Then
     assertThat(dto.getId())

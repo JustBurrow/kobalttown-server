@@ -9,12 +9,12 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
  * @author justburrow
  * @since 2017. 9. 20.
  */
-public class SimpleAccount implements SimpleString {
+public class AccountSimple implements SimpleString {
   private long   id;
   private String email;
   private String name;
 
-  public SimpleAccount(Account account) {
+  public AccountSimple(Account account) {
     notNull(account, "account");
     this.id = account.getId();
     this.email = account.getEmail();
@@ -40,7 +40,7 @@ public class SimpleAccount implements SimpleString {
 
   @Override
   public String toString() {
-    return new StringBuffer(SimpleAccount.class.getSimpleName())
+    return new StringBuffer(AccountSimple.class.getSimpleName())
         .append("{id=").append(this.id)
         .append(", email='").append(this.email).append('\'')
         .append(", name='").append(this.name).append('\'')

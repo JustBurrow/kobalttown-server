@@ -2,7 +2,7 @@ package kr.lul.kobalttown.ms.account.borderline.dto;
 
 import lombok.Data;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 
 /**
  * @author justburrow
@@ -10,14 +10,6 @@ import java.time.Instant;
  */
 @Data
 public class UpdatableDto {
-  private Instant create;
-  private Instant update;
-
-  public UpdatableDto() {
-  }
-
-  public UpdatableDto(Instant create, Instant update) {
-    this.create = create;
-    this.update = update;
-  }
+  private ZonedDateTime create;
+  private ZonedDateTime update;
 }

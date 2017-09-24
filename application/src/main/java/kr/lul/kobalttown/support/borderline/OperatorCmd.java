@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.support.borderline;
 
-import kr.lul.kobalttown.domain.account.SimpleAccount;
+import kr.lul.kobalttown.domain.account.AccountSimple;
 
 import static kr.lul.kobalttown.util.Asserts.notNull;
 
@@ -11,15 +11,15 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
  * @since 2017. 9. 20.
  */
 public abstract class OperatorCmd {
-  protected final SimpleAccount operator;
+  protected final AccountSimple operator;
 
-  protected OperatorCmd(SimpleAccount operator) {
+  protected OperatorCmd(AccountSimple operator) {
     notNull(operator, "operator");
 
     this.operator = operator;
   }
 
-  public SimpleAccount getOperator() {
+  public AccountSimple getOperator() {
     return this.operator;
   }
 }

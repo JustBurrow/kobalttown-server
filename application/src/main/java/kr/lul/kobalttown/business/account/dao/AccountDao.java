@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AccountDao {
   Account insert(Account account);
 
+  Account select(long id);
+
   AccountPrincipal insert(AccountPrincipal principal);
 
   AccountPrincipal selectPrincipal(AccountPrincipalType type, Account account);

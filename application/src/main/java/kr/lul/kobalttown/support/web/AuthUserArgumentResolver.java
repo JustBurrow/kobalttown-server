@@ -30,7 +30,7 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
     }
 
     boolean result = AuthUser.class.equals(parameter.getParameterType());
-    result &= "operator".equals(parameter.getParameterName());
+    // result &= "operator".equals(parameter.getParameterName());
 
     if (log.isTraceEnabled()) {
       log.trace(format("supportsParameter return : %b", result));
