@@ -6,6 +6,8 @@ import kr.lul.kobalttown.ms.account.borderline.AccountBorderline;
 import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
 import kr.lul.kobalttown.ms.account.web.controller.req.EditBasicReq;
 import kr.lul.kobalttown.ms.account.web.controller.req.EditPasswordReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.IssueActivateCodeReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.ResetAccountReq;
 import kr.lul.kobalttown.support.security.AuthUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,7 @@ import static java.lang.String.format;
   @Override
   public String profile(final AuthUser user, final Model model) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("profile args : user=%s, model=%s", user, model));
+      log.trace(format("profile args : user=%s, model=%s", user, model));
     }
 
     AccountDto account = this.accountBorderline.read(user.getId()).val();
@@ -41,9 +43,31 @@ import static java.lang.String.format;
     model.addAttribute("account", account);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("profile result : model=%s", model));
+      log.trace(format("profile result : model=%s", model));
     }
     return "accounts/profile";
+  }
+
+  @Override
+  public String issue(final Model model) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("issue args : model=%s", model));
+    }
+    // TODO
+    return "accounts/activate-issue";
+  }
+
+  @Override
+  public String issue(
+      @ModelAttribute("issueReq") @Valid final IssueActivateCodeReq issueReq, final BindingResult binding,
+      final Model model) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("issue args : issueReq=%s, binding=%s, model=%s", issueReq, binding, model));
+    }
+
+    // TODO
+
+    return null;
   }
 
   @Override
@@ -70,6 +94,27 @@ import static java.lang.String.format;
   }
 
   @Override
+  public String reset(final Model model) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("reset args : model=%s", model));
+    }
+
+    // TODO
+    return "accounts/reset";
+  }
+
+  @Override
+  public String reset(
+      @ModelAttribute("resetReq") @Valid final ResetAccountReq resetReq, final BindingResult binding,
+      final Model model) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("reset args : resetReq=%s, binding=%s, model=%s", resetReq, binding, model));
+    }
+    // TODO
+    return null;
+  }
+
+  @Override
   public String settings(final AuthUser user, final Model model) {
     if (log.isTraceEnabled()) {
       log.trace(format("settings args : model=%s", model));
@@ -91,6 +136,11 @@ import static java.lang.String.format;
       return formSettings(user, model);
     }
 
+    // TODO
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("setting result : model=%s", model));
+    }
     return "redirect:/accounts";
   }
 
@@ -114,7 +164,7 @@ import static java.lang.String.format;
     }
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("formSettings result : model=%s", model));
+      log.trace(format("formSettings result : model=%s", model));
     }
     return "accounts/settings";
   }
@@ -133,6 +183,11 @@ import static java.lang.String.format;
       return formSettings(user, model);
     }
 
+    // TODO
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("password result : model=%s", model));
+    }
     return "redirect:/accounts";
   }
 }
