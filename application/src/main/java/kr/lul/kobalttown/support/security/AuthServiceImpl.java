@@ -4,7 +4,8 @@ import kr.lul.kobalttown.domain.account.AccountPrincipal;
 import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalEmailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static java.lang.String.format;
@@ -14,8 +15,8 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
  * @author justburrow
  * @since 2017. 8. 6.
  */
-public class AuthUserService implements UserDetailsService {
-  private static final Logger log = LoggerFactory.getLogger(AuthUserService.class);
+public class AuthServiceImpl implements AuthService {
+  private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
 
   private AccountPrincipalEmailRepository accountPrincipalEmailRepository;
 
@@ -52,5 +53,15 @@ public class AuthUserService implements UserDetailsService {
       log.trace(format("return : user=%s", user));
     }
     return user;
+  }
+
+  @Override
+  public void logoutCurrent() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (!authentication.isAuthenticated()) {
+      throw new IllegalStateException("not authenticated session.");
+    }
+
+    authentication.setAuthenticated(false);
   }
 }

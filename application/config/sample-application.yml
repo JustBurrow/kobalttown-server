@@ -28,3 +28,4 @@ logging:
   level:
     root: warn
     kr.lul.kobalttown: debug
+    org.hibernate.SQL: debug

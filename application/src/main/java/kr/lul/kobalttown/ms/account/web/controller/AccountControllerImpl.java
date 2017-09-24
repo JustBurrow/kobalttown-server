@@ -2,19 +2,26 @@ package kr.lul.kobalttown.ms.account.web.controller;
 
 import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.business.exception.DataNotExistException;
+import kr.lul.kobalttown.domain.account.AccountPrincipalType;
 import kr.lul.kobalttown.ms.account.borderline.AccountBorderline;
+import kr.lul.kobalttown.ms.account.borderline.cmd.UpdateAccountBasicCmd;
+import kr.lul.kobalttown.ms.account.borderline.cmd.UpdatePasswordCmd;
 import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
 import kr.lul.kobalttown.ms.account.web.controller.req.EditBasicReq;
 import kr.lul.kobalttown.ms.account.web.controller.req.EditPasswordReq;
 import kr.lul.kobalttown.ms.account.web.controller.req.IssueActivateCodeReq;
 import kr.lul.kobalttown.ms.account.web.controller.req.ResetAccountReq;
+import kr.lul.kobalttown.support.security.AuthService;
 import kr.lul.kobalttown.support.security.AuthUser;
+import kr.lul.kobalttown.util.PropertyException;
+import kr.lul.kobalttown.util.PropertyException.CauseProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -31,6 +38,8 @@ import static java.lang.String.format;
 
   @Autowired
   private AccountBorderline accountBorderline;
+  @Autowired
+  private AuthService       authService;
 
   @Override
   public String profile(final AuthUser user, final Model model) {
@@ -136,7 +145,16 @@ import static java.lang.String.format;
       return formSettings(user, model);
     }
 
-    // TODO
+    UpdateAccountBasicCmd cmd = new UpdateAccountBasicCmd(user);
+    cmd.setName(basicReq.getName());
+    try {
+      AccountDto account = this.accountBorderline.update(cmd).val();
+    } catch (PropertyException e) {
+      for (CauseProperty p : e.getProperties()) {
+        binding.addError(new FieldError("basicReq", p.getName(), p.getMessage()));
+      }
+      return formSettings(user, model);
+    }
 
     if (log.isTraceEnabled()) {
       log.trace(format("setting result : model=%s", model));
@@ -179,15 +197,26 @@ import static java.lang.String.format;
                        user, passwordReq, binding, model));
     }
 
+    if (!passwordReq.getPassword().equals(passwordReq.getConfirm())) {
+      binding.addError(new FieldError("passwordReq", "confirm", "비밀번호가 일치하지 않습니다."));
+    }
     if (binding.hasErrors()) {
       return formSettings(user, model);
     }
 
-    // TODO
+    UpdatePasswordCmd cmd = new UpdatePasswordCmd(user);
+    cmd.setType(AccountPrincipalType.EMAIL_PASSWORD);
+    cmd.setPublickKey(user.getEmail());
+    cmd.setCurrent(passwordReq.getCurrent());
+    cmd.setPassword(passwordReq.getPassword());
+
+    AccountDto account = this.accountBorderline.update(cmd).val();
+
+    this.authService.logoutCurrent();
 
     if (log.isTraceEnabled()) {
-      log.trace(format("password result : model=%s", model));
+      log.trace(format("password result : account=%s, model=%s", account, model));
     }
-    return "redirect:/accounts";
+    return "redirect:/";
   }
 }

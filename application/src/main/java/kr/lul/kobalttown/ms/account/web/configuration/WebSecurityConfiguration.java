@@ -1,7 +1,8 @@
 package kr.lul.kobalttown.ms.account.web.configuration;
 
 import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalEmailRepository;
-import kr.lul.kobalttown.support.security.AuthUserService;
+import kr.lul.kobalttown.support.security.AuthService;
+import kr.lul.kobalttown.support.security.AuthServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +38,16 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     return passwordEncoder;
   }
 
+  @Bean
+  public AuthService authService() {
+    AuthServiceImpl authService = new AuthServiceImpl();
+    authService.setAccountPrincipalEmailRepository(this.accountPrincipalEmailRepository);
+    return authService;
+  }
+
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    AuthUserService userService = new AuthUserService();
-    userService.setAccountPrincipalEmailRepository(this.accountPrincipalEmailRepository);
-    auth.userDetailsService(userService)
+    auth.userDetailsService(authService())
         .passwordEncoder(passwordEncoder());
   }
 

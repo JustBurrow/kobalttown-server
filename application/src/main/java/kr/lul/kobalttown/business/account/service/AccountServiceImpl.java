@@ -1,8 +1,10 @@
 package kr.lul.kobalttown.business.account.service;
 
 import kr.lul.kobalttown.business.account.dao.AccountDao;
+import kr.lul.kobalttown.business.account.exception.AccountStateException;
 import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.business.account.service.params.CreateAccountParams;
+import kr.lul.kobalttown.business.account.service.params.UpdateAccountParams;
 import kr.lul.kobalttown.business.account.service.params.UpdatePrincipalParams;
 import kr.lul.kobalttown.business.exception.DataNotExistException;
 import kr.lul.kobalttown.business.message.exception.MessageException;
@@ -16,6 +18,8 @@ import kr.lul.kobalttown.domain.account.AccountPrincipal;
 import kr.lul.kobalttown.jpa.account.entity.AccountEntity;
 import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEmailEntity;
 import kr.lul.kobalttown.util.Maps;
+import kr.lul.kobalttown.util.PropertyException;
+import kr.lul.kobalttown.util.PropertyException.CauseProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,6 +137,33 @@ import static kr.lul.kobalttown.util.Asserts.*;
   }
 
   @Override
+  public Account update(UpdateAccountParams params) throws PropertyException {
+    if (log.isTraceEnabled()) {
+      log.trace(format("update args : params=%s", params));
+    }
+
+    Account account = params.getOperator();
+    notNull(account, "cmd.operator");
+    positive(account.getId(), "cmd.operator.id");
+
+    if (!account.isEnable()) {
+      throw new AccountStateException("account is not enable.");
+    }
+
+    if (null != params.getName() && !account.getName().equals(params.getName())) {
+      if (null != this.accountDao.select(params.getName())) {
+        if (log.isInfoEnabled()) {
+          log.info(format("account name duplicated : name='%s'", params.getName()));
+        }
+        throw new PropertyException("name duplicated.", new CauseProperty("name", params.getName()));
+      }
+      account.setName(params.getName());
+    }
+
+    return account;
+  }
+
+  @Override
   public Account update(UpdatePrincipalParams params) {
     if (log.isTraceEnabled()) {
       log.trace(format("update args : params=%s", params));
@@ -153,8 +184,8 @@ import static kr.lul.kobalttown.util.Asserts.*;
 
     // 삭제 & 저장
     this.accountDao.delete(old);
-    AccountPrincipal principal = new AccountPrincipalEmailEntity(params.getOperator(), params.getPublicKey(),
-                                                                 params.getNewPrivateKey());
+    AccountPrincipal principal = new AccountPrincipalEmailEntity(
+        params.getOperator(), params.getPublicKey(), this.passwordEncoder.encode(params.getNewPrivateKey()));
     principal = this.accountDao.insert(principal);
 
     if (log.isTraceEnabled()) {

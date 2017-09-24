@@ -15,6 +15,8 @@ public interface AccountDao {
 
   Account select(long id);
 
+  Account select(String name);
+
   AccountPrincipal insert(AccountPrincipal principal);
 
   AccountPrincipal selectPrincipal(AccountPrincipalType type, Account account);

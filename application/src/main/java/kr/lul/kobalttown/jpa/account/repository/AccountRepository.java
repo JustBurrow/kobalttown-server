@@ -10,4 +10,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
+  /**
+   * @param name
+   * @return
+   * @@since 2017. 9. 24.
+   */
+  AccountEntity findOneByName(String name);
 }

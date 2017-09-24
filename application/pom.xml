@@ -107,10 +107,6 @@
     </dependency>
     <dependency>
       <groupId>it.ozimov</groupId>
-      <artifactId>spring-boot-email-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>it.ozimov</groupId>
       <artifactId>spring-boot-thymeleaf-email</artifactId>
     </dependency>
     <dependency>

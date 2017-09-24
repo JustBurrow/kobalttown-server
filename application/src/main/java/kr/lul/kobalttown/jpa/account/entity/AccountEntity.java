@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 import static java.lang.String.format;
+import static kr.lul.kobalttown.util.Asserts.matches;
 import static kr.lul.kobalttown.util.Asserts.shorter;
 
 /**
@@ -15,7 +16,11 @@ import static kr.lul.kobalttown.util.Asserts.shorter;
  * @since 2017. 8. 5.
  */
 @Entity(name = "Account")
-@Table(name = "user_account", uniqueConstraints = {@UniqueConstraint(name = "UQ_ACCOUNT_EMAIL", columnNames = "email")})
+@Table(name = "user_account",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "UQ_ACCOUNT_EMAIL", columnNames = "email"),
+        @UniqueConstraint(name = "UQ_ACCOUNT_NAME", columnNames = "name")
+    })
 public class AccountEntity extends AbstractUpdatableEntity implements Account {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +28,7 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
   private long    id;
   @Column(name = "email", unique = true, nullable = false, length = EMAIL_MAX_LENGTH)
   private String  email;
-  @Column(name = "name", nullable = false, length = NAME_MAX_LENGTH)
+  @Column(name = "name", unique = true, nullable = false, length = NAME_MAX_LENGTH)
   private String  name;
   @Column(name = "enabled", nullable = false)
   private boolean enabled;
@@ -36,7 +41,7 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
     shorter(name, NAME_MAX_LENGTH, "name");
 
     this.email = email;
-    this.name = name;
+    setName(name);
   }
 
   @PrePersist
@@ -64,6 +69,12 @@ public class AccountEntity extends AbstractUpdatableEntity implements Account {
   @Override
   public String getName() {
     return this.name;
+  }
+
+  @Override
+  public void setName(String name) {
+    matches(name, Account.NAME_PATTERN, "name");
+    this.name = name;
   }
 
   @Override

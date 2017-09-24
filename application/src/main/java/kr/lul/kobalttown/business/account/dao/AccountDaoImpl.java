@@ -81,6 +81,20 @@ import static kr.lul.kobalttown.util.Asserts.*;
   }
 
   @Override
+  public Account select(String name) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("select args : name='%s'", name));
+    }
+
+    AccountEntity account = this.accountRepository.findOneByName(name);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("select return : %s", account));
+    }
+    return account;
+  }
+
+  @Override
   public AccountPrincipal insert(AccountPrincipal principal) {
     if (log.isTraceEnabled()) {
       log.trace(format("args : principal=%s", principal));
