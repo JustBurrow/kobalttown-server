@@ -3,11 +3,13 @@ package kr.lul.kobalttown.ms.account.borderline;
 import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.business.account.service.AccountService;
 import kr.lul.kobalttown.business.account.service.params.CreateAccountParams;
+import kr.lul.kobalttown.business.account.service.params.IssueAccountResetCodeParams;
 import kr.lul.kobalttown.business.account.service.params.UpdateAccountParams;
 import kr.lul.kobalttown.business.account.service.params.UpdatePrincipalParams;
 import kr.lul.kobalttown.business.exception.DataNotExistException;
 import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.ms.account.borderline.cmd.CreateAccountCmd;
+import kr.lul.kobalttown.ms.account.borderline.cmd.IssueAccountResetCodeCmd;
 import kr.lul.kobalttown.ms.account.borderline.cmd.UpdateAccountBasicCmd;
 import kr.lul.kobalttown.ms.account.borderline.cmd.UpdatePasswordCmd;
 import kr.lul.kobalttown.ms.account.borderline.converter.AccountConverter;
@@ -53,13 +55,13 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
   @Override
   public Lazy<AccountDto> read(long id) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("read args : id=%d", id));
+      log.trace(format("read args : id=%d", id));
     }
 
     Account account = this.accountService.read(id);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("read result : account=%s", account));
+      log.trace(format("read result : account=%s", account));
     }
     return () -> this.accountConverter.convert(account, AccountDto.class);
   }
@@ -67,7 +69,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
   @Override
   public Lazy<AccountDto> update(UpdateAccountBasicCmd cmd) throws PropertyException {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("update args : cmd=%s", cmd));
+      log.trace(format("update args : cmd=%s", cmd));
     }
 
     Account operator = this.accountService.read(cmd.getOperator().getId());
@@ -80,7 +82,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     final Account account = this.accountService.update(params);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("update result : account=%s", operator));
+      log.trace(format("update result : account=%s", operator));
     }
     return () -> this.accountConverter.convert(account, AccountDto.class);
   }
@@ -88,7 +90,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
   @Override
   public Lazy<AccountDto> update(UpdatePasswordCmd cmd) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("update args : cmd=%s", cmd));
+      log.trace(format("update args : cmd=%s", cmd));
     }
 
     Account operator = this.accountService.read(cmd.getOperator().getId());
@@ -104,7 +106,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     Account account = this.accountService.update(params);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("update result : account=%s", account));
+      log.trace(format("update result : account=%s", account));
     }
     return () -> this.accountConverter.convert(account, AccountDto.class);
   }
@@ -118,8 +120,26 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     Account account = this.accountService.activate(code);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("activate result : account=%s", account));
+      log.trace(format("activate result : account=%s", account));
     }
     return () -> this.accountConverter.convert(account, AccountDto.class);
+  }
+
+  /**
+   * @param cmd
+   * @@since 2017. 9. 28.
+   */
+  @Override
+  public void issue(IssueAccountResetCodeCmd cmd) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("issue args : cmd=%s", cmd));
+    }
+
+    notNull(cmd, "cmd");
+
+    IssueAccountResetCodeParams params = new IssueAccountResetCodeParams();
+    params.setEmail(cmd.getEmail());
+
+    this.accountService.issue(params);
   }
 }

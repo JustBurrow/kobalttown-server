@@ -17,6 +17,13 @@ public interface AccountDao {
 
   Account select(String name);
 
+  /**
+   * @param email
+   * @return
+   * @@since 2017. 9. 28.
+   */
+  Account selectEmail(String email);
+
   AccountPrincipal insert(AccountPrincipal principal);
 
   AccountPrincipal selectPrincipal(AccountPrincipalType type, Account account);

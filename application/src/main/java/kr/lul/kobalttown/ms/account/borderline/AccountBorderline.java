@@ -2,6 +2,7 @@ package kr.lul.kobalttown.ms.account.borderline;
 
 import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.ms.account.borderline.cmd.CreateAccountCmd;
+import kr.lul.kobalttown.ms.account.borderline.cmd.IssueAccountResetCodeCmd;
 import kr.lul.kobalttown.ms.account.borderline.cmd.UpdateAccountBasicCmd;
 import kr.lul.kobalttown.ms.account.borderline.cmd.UpdatePasswordCmd;
 import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
@@ -24,4 +25,10 @@ public interface AccountBorderline {
   Lazy<AccountDto> update(UpdatePasswordCmd cmd);
 
   Lazy<AccountDto> activate(String code) throws IllegalAccountActivateCodeException;
+
+  /**
+   * @param cmd
+   * @@since 2017. 9. 28.
+   */
+  void issue(IssueAccountResetCodeCmd cmd);
 }

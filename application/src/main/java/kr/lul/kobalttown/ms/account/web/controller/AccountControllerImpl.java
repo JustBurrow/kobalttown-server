@@ -4,13 +4,11 @@ import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeEx
 import kr.lul.kobalttown.business.exception.DataNotExistException;
 import kr.lul.kobalttown.domain.account.AccountPrincipalType;
 import kr.lul.kobalttown.ms.account.borderline.AccountBorderline;
+import kr.lul.kobalttown.ms.account.borderline.cmd.IssueAccountResetCodeCmd;
 import kr.lul.kobalttown.ms.account.borderline.cmd.UpdateAccountBasicCmd;
 import kr.lul.kobalttown.ms.account.borderline.cmd.UpdatePasswordCmd;
 import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
-import kr.lul.kobalttown.ms.account.web.controller.req.EditBasicReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.EditPasswordReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.IssueActivateCodeReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.ResetAccountReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.*;
 import kr.lul.kobalttown.support.security.AuthService;
 import kr.lul.kobalttown.support.security.AuthUser;
 import kr.lul.kobalttown.util.PropertyException;
@@ -58,23 +56,25 @@ import static java.lang.String.format;
   }
 
   @Override
-  public String issue(final Model model) {
+  public String issueAcivate(final Model model) {
     if (log.isTraceEnabled()) {
-      log.trace(format("issue args : model=%s", model));
+      log.trace(format("issueAcivate args : model=%s", model));
     }
-    // TODO
+
+    // TODO 활성화 하지 않은 계정의 활성화 코드 신규 발급.
+
     return "accounts/activate-issue";
   }
 
   @Override
-  public String issue(
+  public String issueAcivate(
       @ModelAttribute("issueReq") @Valid final IssueActivateCodeReq issueReq, final BindingResult binding,
       final Model model) {
     if (log.isTraceEnabled()) {
-      log.trace(format("issue args : issueReq=%s, binding=%s, model=%s", issueReq, binding, model));
+      log.trace(format("issueAcivate args : issueReq=%s, binding=%s, model=%s", issueReq, binding, model));
     }
 
-    // TODO
+    // TODO 활성화 하지 않은 계정의 활성화 코드 신규 발급.
 
     return null;
   }
@@ -103,24 +103,51 @@ import static java.lang.String.format;
   }
 
   @Override
-  public String reset(final Model model) {
+  public String issueResetCode(final Model model) {
     if (log.isTraceEnabled()) {
-      log.trace(format("reset args : model=%s", model));
+      log.trace(format("issueResetCode args : model=%s", model));
     }
 
-    // TODO
-    return "accounts/reset";
+    return "accounts/reset-issue";
+  }
+
+  @Override
+  public String issueResetCode(IssueAccountResetCodeReq issueReq, BindingResult binding, Model model) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("issueResetCode args : issueReq=%s, binding=%s, model=%s", issueReq, binding, model));
+    }
+
+    // TODO 계정 재설정 코드 발급 & 전송.
+    IssueAccountResetCodeCmd cmd = new IssueAccountResetCodeCmd();
+    cmd.setEmail(issueReq.getEmail());
+    this.accountBorderline.issue(cmd);
+
+    return "accounts/reset-issue-success";
+  }
+
+  @Override
+  public String reset(@PathVariable("code") final String code, final Model model) {
+    if (log.isTraceEnabled()) {
+      log.trace(String.format("reset args : code='%s', model=%s", code, model));
+    }
+
+    // TODO 계정 재설정 폼.
+
+    return "accounts/reset-consume";
   }
 
   @Override
   public String reset(
-      @ModelAttribute("resetReq") @Valid final ResetAccountReq resetReq, final BindingResult binding,
+      @PathVariable("code") final String code,
+      @ModelAttribute("req") @Valid final ResetAccountReq req, final BindingResult binding,
       final Model model) {
     if (log.isTraceEnabled()) {
-      log.trace(format("reset args : resetReq=%s, binding=%s, model=%s", resetReq, binding, model));
+      log.trace(String.format("reset args : code='%s', req=%s, binding=%s, model=%s", code, req, binding, model));
     }
-    // TODO
-    return null;
+
+    // TODO 계정 재설정 결과.
+
+    return "accounts/reset-consume-success";
   }
 
   @Override

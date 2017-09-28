@@ -4,7 +4,7 @@ import lombok.Data;
 
 /**
  * @author justburrow
- * @since 2017. 9. 24.
+ * @since 2017. 9. 25.
  */
 @Data
 public class ResetAccountReq {

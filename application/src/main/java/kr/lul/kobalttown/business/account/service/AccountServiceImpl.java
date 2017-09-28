@@ -4,6 +4,7 @@ import kr.lul.kobalttown.business.account.dao.AccountDao;
 import kr.lul.kobalttown.business.account.exception.AccountStateException;
 import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.business.account.service.params.CreateAccountParams;
+import kr.lul.kobalttown.business.account.service.params.IssueAccountResetCodeParams;
 import kr.lul.kobalttown.business.account.service.params.UpdateAccountParams;
 import kr.lul.kobalttown.business.account.service.params.UpdatePrincipalParams;
 import kr.lul.kobalttown.business.exception.DataNotExistException;
@@ -192,5 +193,32 @@ import static kr.lul.kobalttown.util.Asserts.*;
       log.trace(format("update result : principal=%s", principal));
     }
     return principal.getAccount();
+  }
+
+  /**
+   * @param params
+   * @return
+   * @@since 2017. 9. 28.
+   */
+  @Override
+  public Account issue(IssueAccountResetCodeParams params) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("issue args : params=%s", params));
+    }
+
+    notNull(params, "params");
+
+    Account account = this.accountDao.selectEmail(params.getEmail());
+    if (null == account) {
+      throw new DataNotExistException(format("no account for email : %s", params.getEmail()));
+    }
+
+    // TODO 계정 재설정 코드용 도메인 엔티티 정의
+    // TODO 메일 전송
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("issue return : %s", account));
+    }
+    return account;
   }
 }

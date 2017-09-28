@@ -16,4 +16,11 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
    * @@since 2017. 9. 24.
    */
   AccountEntity findOneByName(String name);
+
+  /**
+   * @param email
+   * @return
+   * @@since 2017. 9. 28.
+   */
+  AccountEntity findOneByEmail(String email);
 }

@@ -1,9 +1,6 @@
 package kr.lul.kobalttown.ms.account.web.controller;
 
-import kr.lul.kobalttown.ms.account.web.controller.req.EditBasicReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.EditPasswordReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.IssueActivateCodeReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.ResetAccountReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.*;
 import kr.lul.kobalttown.support.security.AuthUser;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,8 +11,6 @@ import javax.validation.Valid;
 import static kr.lul.kobalttown.domain.account.AccountActivateCode.CODE_PATTERN;
 
 /**
- * TODO 활성화 하지 않은 계정의 활성화 코드 신규 발급.
- *
  * @author justburrow
  * @since 2017. 9. 13.
  */
@@ -38,7 +33,7 @@ public interface AccountController {
    * @return
    */
   @GetMapping("/activate")
-  String issue(final Model model);
+  String issueAcivate(final Model model);
 
   /**
    * 계정 활성화 코드를 새로 생성해 발송한다.
@@ -49,7 +44,7 @@ public interface AccountController {
    * @return
    */
   @PostMapping("/activate")
-  String issue(
+  String issueAcivate(
       @ModelAttribute("issueReq") @Valid final IssueActivateCodeReq issueReq, final BindingResult binding,
       final Model model);
 
@@ -64,25 +59,53 @@ public interface AccountController {
   String activate(@PathVariable(name = "code") final String code, final Model model);
 
   /**
-   * 계정 재설정 폼.
+   * 계정 재설정 코드 요청.
    *
    * @param model
    * @return
+   * @@since 2017. 9. 25.
    */
   @GetMapping("/reset")
-  String reset(final Model model);
+  String issueResetCode(final Model model);
 
   /**
    * 계정을 재설정한다.
    *
-   * @param resetReq
+   * @param issueReq
+   * @param binding
+   * @param model
+   * @return
+   * @@since 2017. 9. 25.
+   */
+  @PostMapping("/reset")
+  String issueResetCode(
+      @ModelAttribute("issueReq") @Valid final IssueAccountResetCodeReq issueReq, final BindingResult binding,
+      final Model model);
+
+  /**
+   * 계정 재설정 폼.
+   *
+   * @param code
+   * @param model
+   * @return
+   * @@since 2017. 9. 25.
+   */
+  @GetMapping("/reset/{code:.{103}}")
+  String reset(@PathVariable("code") final String code, final Model model);
+
+  /**
+   * 계정 재설정.
+   *
+   * @param code
+   * @param req
    * @param binding
    * @param model
    * @return
    */
-  @PostMapping("/reset")
+  @PostMapping("/reset/{code:.{103}}")
   String reset(
-      @ModelAttribute("resetReq") @Valid final ResetAccountReq resetReq, final BindingResult binding,
+      @PathVariable("code") final String code,
+      @ModelAttribute("req") @Valid final ResetAccountReq req, final BindingResult binding,
       final Model model);
 
   /**

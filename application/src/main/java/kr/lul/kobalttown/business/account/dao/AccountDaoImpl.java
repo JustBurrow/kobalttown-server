@@ -94,6 +94,24 @@ import static kr.lul.kobalttown.util.Asserts.*;
     return account;
   }
 
+  /**
+   * @@since 2017. 9. 28.
+   */
+  @Override
+  public Account selectEmail(String email) {
+    if (log.isTraceEnabled()) {
+      log.trace(String.format("selectEmail args : email='%s'", email));
+    }
+    hasLength(email, "email");
+
+    Account account = this.accountRepository.findOneByEmail(email);
+
+    if (log.isTraceEnabled()) {
+      log.trace(String.format("selectEmail return : %s", account));
+    }
+    return account;
+  }
+
   @Override
   public AccountPrincipal insert(AccountPrincipal principal) {
     if (log.isTraceEnabled()) {
