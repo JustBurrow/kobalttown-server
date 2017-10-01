@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 @Rollback
 public class AccountDaoTest {
+  @Value("${kobalttown.lul.kr.test.email.target-domain}")
+  private String domain;
+
   @Autowired
   private AccountDao accountDao;
 
@@ -54,7 +58,7 @@ public class AccountDaoTest {
   @Test
   public void testInsert() throws Exception {
     // Given
-    final String  email    = EmailUtils.random();
+    final String  email    = EmailUtils.random(this.domain);
     final String  name     = randomAlphanumeric(1, 10);
     final Account expected = new AccountEntity(email, name);
 
@@ -74,7 +78,7 @@ public class AccountDaoTest {
   @Test
   public void testInsertWithDuplicatedEmail() throws Exception {
     // Given
-    final String email = EmailUtils.random();
+    final String email = EmailUtils.random(this.domain);
     assertThat(this.accountDao.insert(new AccountEntity(email, randomAlphanumeric(1, 10))))
         .isNotNull();
     final Account expected = new AccountEntity(email, randomAlphanumeric(1, 10));

@@ -8,7 +8,10 @@ import kr.lul.kobalttown.ms.account.borderline.cmd.IssueAccountResetCodeCmd;
 import kr.lul.kobalttown.ms.account.borderline.cmd.UpdateAccountBasicCmd;
 import kr.lul.kobalttown.ms.account.borderline.cmd.UpdatePasswordCmd;
 import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
-import kr.lul.kobalttown.ms.account.web.controller.req.*;
+import kr.lul.kobalttown.ms.account.web.controller.req.EditBasicReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.EditPasswordReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.IssueAccountResetCodeReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.IssueActivateCodeReq;
 import kr.lul.kobalttown.support.security.AuthService;
 import kr.lul.kobalttown.support.security.AuthUser;
 import kr.lul.kobalttown.util.PropertyException;
@@ -117,7 +120,6 @@ import static java.lang.String.format;
       log.trace(format("issueResetCode args : issueReq=%s, binding=%s, model=%s", issueReq, binding, model));
     }
 
-    // TODO 계정 재설정 코드 발급 & 전송.
     IssueAccountResetCodeCmd cmd = new IssueAccountResetCodeCmd();
     cmd.setEmail(issueReq.getEmail());
     this.accountBorderline.issue(cmd);
@@ -133,21 +135,7 @@ import static java.lang.String.format;
 
     // TODO 계정 재설정 폼.
 
-    return "accounts/reset-consume";
-  }
-
-  @Override
-  public String reset(
-      @PathVariable("code") final String code,
-      @ModelAttribute("req") @Valid final ResetAccountReq req, final BindingResult binding,
-      final Model model) {
-    if (log.isTraceEnabled()) {
-      log.trace(String.format("reset args : code='%s', req=%s, binding=%s, model=%s", code, req, binding, model));
-    }
-
-    // TODO 계정 재설정 결과.
-
-    return "accounts/reset-consume-success";
+    return "accounts/reset-success";
   }
 
   @Override

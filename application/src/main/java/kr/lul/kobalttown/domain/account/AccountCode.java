@@ -8,7 +8,7 @@ import java.time.Instant;
  * @author justburrow
  * @since 2017. 9. 6.
  */
-public interface AccountActivateCode extends Updatable {
+public interface AccountCode extends Updatable {
   /**
    * 활성화 코드 길이. 고정.
    */
@@ -32,6 +32,8 @@ public interface AccountActivateCode extends Updatable {
    * @return
    */
   Account getAccount();
+
+  AccountCodeType getType();
 
   /**
    * 활성화 코드.

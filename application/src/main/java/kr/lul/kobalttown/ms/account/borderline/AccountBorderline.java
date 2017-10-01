@@ -30,5 +30,5 @@ public interface AccountBorderline {
    * @param cmd
    * @@since 2017. 9. 28.
    */
-  void issue(IssueAccountResetCodeCmd cmd);
+  Lazy<AccountDto> issue(IssueAccountResetCodeCmd cmd);
 }

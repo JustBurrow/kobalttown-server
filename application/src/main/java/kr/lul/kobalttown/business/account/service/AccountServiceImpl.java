@@ -14,7 +14,8 @@ import kr.lul.kobalttown.business.message.service.params.EmailAddress;
 import kr.lul.kobalttown.business.message.service.params.TemplateEmailMessageParams;
 import kr.lul.kobalttown.business.message.service.params.TemplateMessageParams;
 import kr.lul.kobalttown.domain.account.Account;
-import kr.lul.kobalttown.domain.account.AccountActivateCode;
+import kr.lul.kobalttown.domain.account.AccountCode;
+import kr.lul.kobalttown.domain.account.AccountCodeReset;
 import kr.lul.kobalttown.domain.account.AccountPrincipal;
 import kr.lul.kobalttown.jpa.account.entity.AccountEntity;
 import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEmailEntity;
@@ -29,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static java.lang.String.format;
+import static kr.lul.kobalttown.domain.account.AccountCode.CODE_PATTERN;
 import static kr.lul.kobalttown.util.Asserts.*;
 
 /**
@@ -49,6 +51,18 @@ import static kr.lul.kobalttown.util.Asserts.*;
   @Value("${kobalttown.lul.kr.email.account-activate-code.host}")
   private String accountActivateHost;
 
+
+  @Value("${kobalttown.lul.kr.email.account-reset-code.address}")
+  private String accountResetSender;
+  @Value("${kobalttown.lul.kr.email.account-reset-code.name}")
+  private String accountResetName;
+  @Value("${kobalttown.lul.kr.email.account-reset-code.subject}")
+  private String accountResetSubject;
+  @Value("${kobalttown.lul.kr.email.account-reset-code.template}")
+  private String accountResetTemplate;
+  @Value("${kobalttown.lul.kr.email.account-reset-code.host}")
+  private String accountResetHost;
+
   @Autowired
   private AccountCodeService accountCodeService;
   @Autowired
@@ -64,9 +78,6 @@ import static kr.lul.kobalttown.util.Asserts.*;
       log.trace(format("args : params=%s", params));
     }
     notNull(params, "params");
-    hasLength(params.getEmail(), "params.email");
-    notNull(params.getPassword(), "params.password");
-    bcrypt(params.getPassword(), "params.password");
 
     // save account
     Account account = new AccountEntity(params.getEmail(), params.getName());
@@ -77,7 +88,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
     principal = this.accountDao.insert(principal);
 
     // save activate code
-    AccountActivateCode activateCode = this.accountCodeService.createAcitivateCode(account);
+    AccountCode activateCode = this.accountCodeService.createAcitivateCode(account);
 
     // send email
     try {
@@ -122,7 +133,9 @@ import static kr.lul.kobalttown.util.Asserts.*;
       log.trace(format("activate args : code='%s'", code));
     }
 
-    AccountActivateCode activateCode = this.accountCodeService.readActivateCode(code);
+    matches(code, CODE_PATTERN, "code");
+
+    AccountCode activateCode = this.accountCodeService.readActivateCode(code);
     if (null == activateCode) {
       throw new DataNotExistException(format("account activate code : %s", code));
     } else if (activateCode.isUsed()) {
@@ -142,6 +155,8 @@ import static kr.lul.kobalttown.util.Asserts.*;
     if (log.isTraceEnabled()) {
       log.trace(format("update args : params=%s", params));
     }
+
+    notNull(params, "params");
 
     Account account = params.getOperator();
     notNull(account, "cmd.operator");
@@ -169,6 +184,8 @@ import static kr.lul.kobalttown.util.Asserts.*;
     if (log.isTraceEnabled()) {
       log.trace(format("update args : params=%s", params));
     }
+
+    notNull(params, "params");
 
     // validation
     AccountPrincipal old = this.accountDao.selectPrincipal(params.getType(), params.getOperator());
@@ -213,8 +230,24 @@ import static kr.lul.kobalttown.util.Asserts.*;
       throw new DataNotExistException(format("no account for email : %s", params.getEmail()));
     }
 
-    // TODO 계정 재설정 코드용 도메인 엔티티 정의
-    // TODO 메일 전송
+    AccountCodeReset acr = this.accountCodeService.createReset(account);
+
+    // send email
+    try {
+      TemplateMessageParams msg = new TemplateEmailMessageParams(
+          new EmailAddress(this.accountResetSender, this.accountResetName),
+          new EmailAddress(account.getEmail(), account.getName()),
+          this.accountResetSubject, this.accountResetTemplate,
+          Maps.<String, Object>hashmap("account", account)
+              .put("host", this.accountResetHost)
+              .put("code", acr.getCode())
+              .put("expire", acr.getExpire())
+              .build());
+      this.messageService.send(msg);
+    } catch (MessageException e) {
+      log.error(format("fail to send account activate code : account=%s", account), e);
+    }
+
 
     if (log.isTraceEnabled()) {
       log.trace(format("issue return : %s", account));

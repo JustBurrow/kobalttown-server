@@ -3,7 +3,7 @@ package kr.lul.kobalttown.business.account.service;
 import kr.lul.kobalttown.business.account.service.params.CreateAccountParams;
 import kr.lul.kobalttown.business.account.service.params.UpdatePrincipalParams;
 import kr.lul.kobalttown.domain.account.*;
-import kr.lul.kobalttown.jpa.account.entity.AccountActivateCodeEntity;
+import kr.lul.kobalttown.jpa.account.entity.AbstractAccountCode;
 import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEntity;
 import kr.lul.kobalttown.jpa.account.repository.AccountActivateCodeRepository;
 import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalEmailRepository;
@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -35,6 +36,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 @Rollback
 public class AccountServiceTest extends AbstractAccountServiceTest {
+  @Value("${kobalttown.lul.kr.test.email.target-domain}")
+  private String domain;
+
   @Autowired
   private AccountActivateCodeRepository   accountActivateCodeRepository;
   @Autowired
@@ -69,7 +73,7 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
   @Test
   public void testCreateWithNullPassword() throws Exception {
     // Given
-    final String              email  = EmailUtils.random();
+    final String              email  = EmailUtils.random(this.domain);
     final CreateAccountParams params = new CreateAccountParams(email, randomAlphanumeric(R.in(1, 10)), null);
 
     // When & Then
@@ -83,7 +87,7 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
     // Given
     final String password = this.passwordEncoder.encode(random(R.in(1, 20))).substring(1) + "*";
     final CreateAccountParams params = new CreateAccountParams(
-        EmailUtils.random(), randomAlphanumeric(R.in(1, 10)), password);
+        EmailUtils.random(this.domain), randomAlphanumeric(R.in(1, 10)), password);
 
     // When & Then
     assertThatThrownBy(() -> this.accountService.create(params))
@@ -94,7 +98,7 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
   @Test
   public void testCreateWithRandom() throws Exception {
     // Given
-    final String email    = EmailUtils.random();
+    final String email    = EmailUtils.random(this.domain);
     final String name     = randomAlphanumeric(R.in(1, 20));
     final String password = this.passwordEncoder.encode(random(R.in(1, 20)));
 
@@ -112,17 +116,17 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
         .isAfterOrEqualTo(this.before)
         .isEqualTo(account.getUpdate());
 
-    AccountActivateCodeEntity aac = this.accountActivateCodeRepository.findOneByAccount(account);
+    AbstractAccountCode aac = this.accountActivateCodeRepository.findOneByAccount(account);
     assertThat(aac)
         .isNotNull()
-        .extracting(AccountActivateCode::getAccount, AccountActivateCode::getUsed)
+        .extracting(AccountCode::getAccount, AccountCode::getUsed)
         .containsExactly(account, null);
   }
 
   @Test
   public void testCreateWithDuplicatedEmail() throws Exception {
     // Given
-    final String email = EmailUtils.random();
+    final String email = EmailUtils.random(this.domain);
     this.accountService.create(
         new CreateAccountParams(email, randomAlphanumeric(1, 20), this.passwordEncoder.encode(random(R.in(1, 20)))));
 
@@ -141,7 +145,7 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
     final Account               account     = randomAccount(oldPassword);
     final long                  accountId   = account.getId();
     final AccountPrincipalEmail old         = this.accountPrincipalEmailRepository.findOneByEmail(account.getEmail());
-    final String                newPassword = this.passwordEncoder.encode(randomAlphanumeric(4, 20));
+    final String                newPassword = randomAlphanumeric(4, 20);
     final UpdatePrincipalParams params      = new UpdatePrincipalParams(account);
     params.setType(AccountPrincipalType.EMAIL_PASSWORD);
     params.setPublicKey(account.getEmail());
@@ -164,8 +168,10 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
 
     assertThat(principal)
         .isNotNull()
-        .extracting(AccountPrincipal::getAccount, AccountPrincipal::getPublicKey, AccountPrincipal::getPrivateKey)
-        .containsExactly(account, account.getEmail(), newPassword);
+        .extracting(AccountPrincipal::getAccount, AccountPrincipal::getPublicKey)
+        .containsExactly(account, account.getEmail());
+    assertThat(this.passwordEncoder.matches(newPassword, principal.getPrivateKey()))
+        .isTrue();
     assertThat(principal.getId())
         .isGreaterThan(old.getId());
     assertThat(principal.getCreate())

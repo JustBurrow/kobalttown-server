@@ -1,7 +1,8 @@
 package kr.lul.kobalttown.jpa.account.repository;
 
 import kr.lul.kobalttown.domain.account.Account;
-import kr.lul.kobalttown.jpa.account.entity.AccountActivateCodeEntity;
+import kr.lul.kobalttown.domain.account.AccountCodeType;
+import kr.lul.kobalttown.jpa.account.entity.AbstractAccountCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,14 +11,14 @@ import org.springframework.stereotype.Repository;
  * @since 2017. 9. 6.
  */
 @Repository
-public interface AccountActivateCodeRepository extends JpaRepository<AccountActivateCodeEntity, Long> {
-  AccountActivateCodeEntity findOneByAccount(Account account);
+public interface AccountActivateCodeRepository extends JpaRepository<AbstractAccountCode, Long> {
+  AbstractAccountCode findOneByAccount(Account account);
 
-  long countByCode(String code);
+  long countByTypeAndCode(AccountCodeType type, String code);
 
-  AccountActivateCodeEntity findOneByCode(String code);
+  AbstractAccountCode findOneByTypeAndCode(AccountCodeType type, String code);
 
-  boolean existsByAccount(Account account);
+  boolean existsByTypeAndAccount(AccountCodeType type, Account account);
 
-  void deleteByAccount(Account account);
+  void deleteByTypeAndAccount(AccountCodeType type, Account account);
 }

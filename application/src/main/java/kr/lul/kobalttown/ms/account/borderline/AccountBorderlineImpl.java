@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static java.lang.String.format;
+import static kr.lul.kobalttown.domain.account.AccountCode.CODE_PATTERN;
+import static kr.lul.kobalttown.util.Asserts.matches;
 import static kr.lul.kobalttown.util.Asserts.notNull;
 
 /**
@@ -71,6 +73,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     if (log.isTraceEnabled()) {
       log.trace(format("update args : cmd=%s", cmd));
     }
+    notNull(cmd, "cmd");
 
     Account operator = this.accountService.read(cmd.getOperator().getId());
     if (null == operator) {
@@ -92,6 +95,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     if (log.isTraceEnabled()) {
       log.trace(format("update args : cmd=%s", cmd));
     }
+    notNull(cmd, "cmd");
 
     Account operator = this.accountService.read(cmd.getOperator().getId());
     if (null == operator) {
@@ -116,6 +120,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     if (log.isTraceEnabled()) {
       log.trace(format("activate args : code='%s'", code));
     }
+    matches(code, CODE_PATTERN, "code");
 
     Account account = this.accountService.activate(code);
 
@@ -130,7 +135,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
    * @@since 2017. 9. 28.
    */
   @Override
-  public void issue(IssueAccountResetCodeCmd cmd) {
+  public Lazy<AccountDto> issue(IssueAccountResetCodeCmd cmd) {
     if (log.isTraceEnabled()) {
       log.trace(format("issue args : cmd=%s", cmd));
     }
@@ -140,6 +145,11 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     IssueAccountResetCodeParams params = new IssueAccountResetCodeParams();
     params.setEmail(cmd.getEmail());
 
-    this.accountService.issue(params);
+    Account account = this.accountService.issue(params);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("issue result : account=%s", account));
+    }
+    return () -> this.accountConverter.convert(account, AccountDto.class);
   }
 }

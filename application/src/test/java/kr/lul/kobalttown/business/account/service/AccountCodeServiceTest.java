@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.business.account.service;
 
 import kr.lul.kobalttown.domain.account.Account;
-import kr.lul.kobalttown.domain.account.AccountActivateCode;
+import kr.lul.kobalttown.domain.account.AccountCode;
 import kr.lul.kobalttown.util.AssertionException;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
-import static kr.lul.kobalttown.domain.account.AccountActivateCode.TTL;
+import static kr.lul.kobalttown.domain.account.AccountCode.TTL;
 import static kr.lul.kobalttown.util.RandomUtil.R;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -57,13 +57,13 @@ public class AccountCodeServiceTest extends AbstractAccountServiceTest {
 
     // When
     Thread.sleep(R.positive(2000L));
-    final Instant             timestamp = this.timeProvider.now();
-    final AccountActivateCode code      = this.accountCodeService.createAcitivateCode(account);
+    final Instant     timestamp = this.timeProvider.now();
+    final AccountCode code      = this.accountCodeService.createAcitivateCode(account);
 
     // Then
     assertThat(code)
         .isNotNull()
-        .extracting(AccountActivateCode::getAccount, AccountActivateCode::getUsed, AccountActivateCode::isUsed)
+        .extracting(AccountCode::getAccount, AccountCode::getUsed, AccountCode::isUsed)
         .containsExactly(account, null, false);
     assertThat(code.getId())
         .isGreaterThan(0L);

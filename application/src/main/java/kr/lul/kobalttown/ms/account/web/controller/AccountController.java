@@ -1,6 +1,9 @@
 package kr.lul.kobalttown.ms.account.web.controller;
 
-import kr.lul.kobalttown.ms.account.web.controller.req.*;
+import kr.lul.kobalttown.ms.account.web.controller.req.EditBasicReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.EditPasswordReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.IssueAccountResetCodeReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.IssueActivateCodeReq;
 import kr.lul.kobalttown.support.security.AuthUser;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static kr.lul.kobalttown.domain.account.AccountActivateCode.CODE_PATTERN;
+import static kr.lul.kobalttown.domain.account.AccountCode.CODE_PATTERN;
 
 /**
  * @author justburrow
@@ -90,23 +93,8 @@ public interface AccountController {
    * @return
    * @@since 2017. 9. 25.
    */
-  @GetMapping("/reset/{code:.{103}}")
+  @GetMapping("/reset/{code:" + CODE_PATTERN + "}")
   String reset(@PathVariable("code") final String code, final Model model);
-
-  /**
-   * 계정 재설정.
-   *
-   * @param code
-   * @param req
-   * @param binding
-   * @param model
-   * @return
-   */
-  @PostMapping("/reset/{code:.{103}}")
-  String reset(
-      @PathVariable("code") final String code,
-      @ModelAttribute("req") @Valid final ResetAccountReq req, final BindingResult binding,
-      final Model model);
 
   /**
    * 기본 설정 변경하기.
