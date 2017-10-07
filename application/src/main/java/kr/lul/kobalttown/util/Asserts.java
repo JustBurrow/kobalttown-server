@@ -1005,14 +1005,13 @@ public abstract class Asserts {
    * @param number 단정할 숫자.
    * @param min    최소(포함).
    * @param max    최대(미포함).
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void in(byte number, byte min, byte max) throws IllegalArgumentException, AssertionException {
+  public static void in(byte number, byte min, byte max) throws AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(format("min[%d] is greater than or equal to max[%d].", min, max));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1026,15 +1025,14 @@ public abstract class Asserts {
    * @param min     최소(포함).
    * @param max     최대(미포함).
    * @param message 단정 실패시의 예외 메시지.
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void in(byte number, byte min, byte max, String message)
-      throws IllegalArgumentException, AssertionException {
+  public static void in(byte number, byte min, byte max, String message) throws AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(message, new IllegalArgumentException(
+          format("min[%d] is greater than or equal to max[%d].", min, max)));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1047,14 +1045,13 @@ public abstract class Asserts {
    * @param number 단정할 숫자.
    * @param min    최소(포함).
    * @param max    최대(미포함).
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void in(short number, short min, short max) throws IllegalArgumentException, AssertionException {
+  public static void in(short number, short min, short max) throws AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(format("min[%d] is greater than or equal to max[%d].", min, max));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1068,15 +1065,14 @@ public abstract class Asserts {
    * @param min     최소(포함).
    * @param max     최대(미포함).
    * @param message 단정 실패시의 예외 메시지.
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void in(short number, short min, short max, String message)
-      throws IllegalArgumentException, AssertionException {
+  public static void in(short number, short min, short max, String message) throws AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(message, new IllegalArgumentException(
+          format("min[%d] is greater than or equal to max[%d].", min, max)));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1089,14 +1085,13 @@ public abstract class Asserts {
    * @param number 단정할 숫자.
    * @param min    최소(포함).
    * @param max    최대(미포함).
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void in(int number, int min, int max) throws IllegalArgumentException, AssertionException {
+  public static void in(int number, int min, int max) throws AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(format("min[%d] is greater than or equal to max[%d].", min, max));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1110,15 +1105,14 @@ public abstract class Asserts {
    * @param min     최소(포함).
    * @param max     최대(미포함).
    * @param message 단정 실패시의 예외 메시지.
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void in(int number, int min, int max, String message)
-      throws IllegalArgumentException, AssertionException {
+  public static void in(int number, int min, int max, String message) throws AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(message, new IllegalArgumentException(
+          format("min[%d] is greater than or equal to max[%d].", min, max)));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1131,14 +1125,13 @@ public abstract class Asserts {
    * @param number 단정할 숫자.
    * @param min    최소(포함).
    * @param max    최대(미포함).
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
   public static void in(long number, long min, long max) throws IllegalArgumentException, AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(format("min[%d] is greater than or equal to max[%d].", min, max));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1152,15 +1145,14 @@ public abstract class Asserts {
    * @param min     최소(포함).
    * @param max     최대(미포함).
    * @param message 단정 실패시의 예외 메시지.
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void in(long number, long min, long max, String message)
-      throws IllegalArgumentException, AssertionException {
+  public static void in(long number, long min, long max, String message) throws AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(message, new IllegalArgumentException(
+          format("min[%d] is greater than or equal to max[%d].", min, max)));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1173,14 +1165,13 @@ public abstract class Asserts {
    * @param number 단정할 숫자.
    * @param min    최소(포함).
    * @param max    최대(미포함).
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
   public static void in(float number, float min, float max) throws IllegalArgumentException, AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(format("min[%d] is greater than or equal to max[%d].", min, max));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1194,15 +1185,14 @@ public abstract class Asserts {
    * @param min     최소(포함).
    * @param max     최대(미포함).
    * @param message 단정 실패시의 예외 메시지.
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void in(float number, float min, float max, String message)
-      throws IllegalArgumentException, AssertionException {
+  public static void in(float number, float min, float max, String message) throws AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(message, new IllegalArgumentException(
+          format("min[%d] is greater than or equal to max[%d].", min, max)));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1215,14 +1205,13 @@ public abstract class Asserts {
    * @param number 단정할 숫자.
    * @param min    최소(포함).
    * @param max    최대(미포함).
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void in(double number, double min, double max) throws IllegalArgumentException, AssertionException {
+  public static void in(double number, double min, double max) throws AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(format("min[%d] is greater than or equal to max[%d].", min, max));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1236,15 +1225,14 @@ public abstract class Asserts {
    * @param min     최소(포함).
    * @param max     최대(미포함).
    * @param message 단정 실패시의 예외 메시지.
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void in(double number, double min, double max, String message)
-      throws IllegalArgumentException, AssertionException {
+  public static void in(double number, double min, double max, String message) throws AssertionException {
     if (min >= max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than or equal to max[%d].", min, max));
+      throw new AssertionException(message, new IllegalArgumentException(
+          format("min[%d] is greater than or equal to max[%d].", min, max)));
     } else if (min <= number && number < max) {
       return;
     }
@@ -1430,17 +1418,15 @@ public abstract class Asserts {
    *
    * @param c1
    * @param c2
-   * @throws NullPointerException <code>c1</code> 혹은 <code>c2</code>가 <code>null</code>인 경우.
-   * @throws AssertionException   단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author Just Burrow
    * @since 2016. 9. 27.
    */
-  public static <T extends Comparable<T>> void lt(T c1, T c2)
-      throws NullPointerException, AssertionException {
+  public static <T extends Comparable<T>> void lt(T c1, T c2) throws AssertionException {
     if (null == c1) {
-      throw new NullPointerException("c1 is null.");
+      throw new AssertionException("c1 is null.");
     } else if (null == c2) {
-      throw new NullPointerException("c2 is null.");
+      throw new AssertionException("c2 is null.");
     } else if (c1 == c2 || 0 <= c1.compareTo(c2)) {
       throw new AssertionException(format("c1[%s] is not less than c2[%s].", c1, c2));
     }
@@ -1625,17 +1611,15 @@ public abstract class Asserts {
    *
    * @param c1
    * @param c2
-   * @throws NullPointerException <code>c1</code> 혹은 <code>c2</code>가 <code>null</code>인 경우.
-   * @throws AssertionException   단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author Just Burrow
    * @since 2016. 9. 27.
    */
-  public static <T extends Comparable<T>> void le(T c1, T c2)
-      throws NullPointerException, AssertionException {
+  public static <T extends Comparable<T>> void le(T c1, T c2) throws AssertionException {
     if (null == c1) {
-      throw new NullPointerException("c1 is null.");
+      throw new AssertionException("c1 is null.");
     } else if (null == c2) {
-      throw new NullPointerException("c2 is null.");
+      throw new AssertionException("c2 is null.");
     } else if (c1 == c2) {
       return;
     } else if (0 < c1.compareTo(c2)) {
@@ -1822,17 +1806,15 @@ public abstract class Asserts {
    *
    * @param c1
    * @param c2
-   * @throws NullPointerException <code>c1</code> 혹은 <code>c2</code>가 <code>null</code>인 경우.
-   * @throws AssertionException   단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author Just Burrow
    * @since 2016. 9. 27.
    */
-  public static <T extends Comparable<T>> void gt(T c1, T c2)
-      throws NullPointerException, AssertionException {
+  public static <T extends Comparable<T>> void gt(T c1, T c2) throws AssertionException {
     if (null == c1) {
-      throw new NullPointerException("c1 is null.");
+      throw new AssertionException("c1 is null.");
     } else if (null == c2) {
-      throw new NullPointerException("c2 is null.");
+      throw new AssertionException("c2 is null.");
     } else if (c1 == c2 || 0 > c1.compareTo(c2)) {
       throw new AssertionException(format("c1[%s] is not greater than c2[%s].", c1, c2));
     }
@@ -2017,17 +1999,15 @@ public abstract class Asserts {
    *
    * @param c1
    * @param c2
-   * @throws NullPointerException <code>c1</code> 혹은 <code>c2</code>가 <code>null</code>인 경우.
-   * @throws AssertionException   단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author Just Burrow
    * @since 2016. 9. 27.
    */
-  public static <T extends Comparable<T>> void ge(T c1, T c2)
-      throws NullPointerException, AssertionException {
+  public static <T extends Comparable<T>> void ge(T c1, T c2) throws AssertionException {
     if (null == c1) {
-      throw new NullPointerException("c1 is null.");
+      throw new AssertionException("c1 is null.");
     } else if (null == c2) {
-      throw new NullPointerException("c2 is null.");
+      throw new AssertionException("c2 is null.");
     } else if (c1 == c2) {
       return;
     } else if (0 >= c1.compareTo(c2)) {
@@ -2093,12 +2073,13 @@ public abstract class Asserts {
    * @param instance
    * @param type
    * @return
+   * @throws AssertionException
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  private static boolean isAssignable(Object instance, Class<?> type) {
+  private static boolean isAssignable(Object instance, Class<?> type) throws AssertionException {
     if (null == type) {
-      throw new NullPointerException("type");
+      throw new AssertionException("type is null.");
     } else if (null == instance) {
       return true;
     }
@@ -2220,18 +2201,15 @@ public abstract class Asserts {
    *
    * @param string 단정할 문자열.
    * @param length 기준 길이.
-   * @throws NullPointerException     <code>string</code>이 <code>null</code>
-   * @throws IllegalArgumentException <code>length</code>가 음수일 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void length(CharSequence string, int length)
-      throws NullPointerException, IllegalArgumentException, AssertionException {
+  public static void length(CharSequence string, int length) throws AssertionException {
     if (null == string) {
-      throw new NullPointerException("string");
+      throw new AssertionException("string is null.");
     } else if (0 > length) {
-      throw new IllegalArgumentException(format("length[%d] is negative.", length));
+      throw new AssertionException(format("length[%d] is negative.", length));
     } else if (length > string.length()) {
       throw new AssertionException(
           format("string[%s](%d) is shorter than length[%d]", string, string.length(), length));
@@ -2247,18 +2225,15 @@ public abstract class Asserts {
    * @param string  단정할 문자열.
    * @param length  기준 길이.
    * @param message 단정 실패시의 예외 메시지.
-   * @throws NullPointerException     <code>string</code>이 <code>null</code>
-   * @throws IllegalArgumentException <code>length</code>가 음수일 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void length(CharSequence string, int length, String message)
-      throws NullPointerException, IllegalArgumentException, AssertionException {
+  public static void length(CharSequence string, int length, String message) throws AssertionException {
     if (null == string) {
-      throw new NullPointerException("string");
+      throw new AssertionException(message, new NullPointerException("string"));
     } else if (0 > length) {
-      throw new IllegalArgumentException(format("length[%d] is negative.", length));
+      throw new AssertionException(message, new IllegalArgumentException(format("length[%d] is negative.", length)));
     } else if (length == string.length()) {
       return;
     }
@@ -2271,18 +2246,15 @@ public abstract class Asserts {
    * @param string 단정할 문자열.
    * @param min    최소 길이(포함).
    * @param max    최대 길이(포함).
-   * @throws NullPointerException     <code>string</code>이 <code>null</code>
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void length(CharSequence string, int min, int max)
-      throws NullPointerException, IllegalArgumentException, AssertionException {
+  public static void length(CharSequence string, int min, int max) throws AssertionException {
     if (null == string) {
-      throw new NullPointerException("string");
+      throw new AssertionException("string");
     } else if (min > max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than max[%d].", min, max));
+      throw new AssertionException(format("min[%d] is greater than max[%d].", min, max));
     }
 
     int length = string.length();
@@ -2300,18 +2272,16 @@ public abstract class Asserts {
    * @param min     최소 길이(포함).
    * @param max     최대 길이(포함).
    * @param message 단정 실패시의 예외 메시지.
-   * @throws NullPointerException     <code>string</code>이 <code>null</code>
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void length(CharSequence string, int min, int max, String message)
-      throws IllegalArgumentException, AssertionException {
+  public static void length(CharSequence string, int min, int max, String message) throws AssertionException {
     if (null == string) {
-      throw new NullPointerException("string");
+      throw new AssertionException(message, new NullPointerException("string"));
     } else if (min > max) {
-      throw new IllegalArgumentException(format("min[%d] is greater than max[%d].", min, max));
+      throw new AssertionException(
+          message, new IllegalArgumentException(format("min[%d] is greater than max[%d].", min, max)));
     }
 
     int length = string.length();
@@ -2326,18 +2296,15 @@ public abstract class Asserts {
    *
    * @param string 단정할 문자열.
    * @param length 기준 길이(포함).
-   * @throws NullPointerException     <code>string</code>이 <code>null</code>
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void shorter(CharSequence string, int length)
-      throws NullPointerException, IllegalArgumentException, AssertionException {
+  public static void shorter(CharSequence string, int length) throws AssertionException {
     if (null == string) {
-      throw new NullPointerException("string");
+      throw new AssertionException("string");
     } else if (0 > length) {
-      throw new IllegalArgumentException(format("length[%d] is negative.", length));
+      throw new AssertionException(format("length[%d] is negative.", length));
     } else if (length < string.length()) {
       throw new AssertionException(
           format("length[%d] of string[%s] is longer than boundary[%d].", string.length(), string, length));
@@ -2350,18 +2317,15 @@ public abstract class Asserts {
    * @param string  단정할 문자열.
    * @param length  기준 길이(포함).
    * @param message 단정 실패시의 예외 메시지.
-   * @throws NullPointerException     <code>string</code>이 <code>null</code>
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void shorter(CharSequence string, int length, String message)
-      throws NullPointerException, IllegalArgumentException, AssertionException {
+  public static void shorter(CharSequence string, int length, String message) throws AssertionException {
     if (null == string) {
-      throw new NullPointerException("string");
+      throw new AssertionException(message, new NullPointerException("string"));
     } else if (0 > length) {
-      throw new IllegalArgumentException(format("length[%d] is negative.", length));
+      throw new AssertionException(message, new IllegalArgumentException(format("length[%d] is negative.", length)));
     } else if (length < string.length()) {
       throw new AssertionException(message);
     }
@@ -2372,17 +2336,15 @@ public abstract class Asserts {
    *
    * @param string 단정할 문자열.
    * @param length 기준 길이(포함).
-   * @throws NullPointerException     <code>string</code>이 <code>null</code>
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
   public static void longer(CharSequence string, int length) throws AssertionException {
     if (null == string) {
-      throw new NullPointerException("string");
+      throw new AssertionException("string");
     } else if (0 > length) {
-      throw new IllegalArgumentException(format("length[%d] is negative.", length));
+      throw new AssertionException(format("length[%d] is negative.", length));
     } else if (length > string.length()) {
       throw new AssertionException(
           format("length[%d] of string[%s] is shorter than boundary[%d].", string.length(), string, length));
@@ -2395,17 +2357,15 @@ public abstract class Asserts {
    * @param string  단정할 문자열.
    * @param length  기준 길이(포함).
    * @param message 단정 실패시의 예외 메시지.
-   * @throws NullPointerException     <code>string</code>이 <code>null</code>
-   * @throws IllegalArgumentException 범위가 잘못된 경우.
-   * @throws AssertionException       단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
   public static void longer(CharSequence string, int length, String message) throws AssertionException {
     if (null == string) {
-      throw new NullPointerException("string");
+      throw new AssertionException(message, new NullPointerException("string is null."));
     } else if (0 > length) {
-      throw new IllegalArgumentException(format("length[%d] is negative.", length));
+      throw new AssertionException(message, new IllegalArgumentException(format("length[%d] is negative.", length)));
     } else if (length > string.length()) {
       throw new AssertionException(message);
     }
@@ -2416,16 +2376,15 @@ public abstract class Asserts {
    *
    * @param text 단정할 문자열.
    * @param that 비교할 문자열.
-   * @throws NullPointerException 문자열이 <code>null</code>인 경우.
-   * @throws AssertionException   단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void starts(CharSequence text, CharSequence that) throws NullPointerException, AssertionException {
+  public static void starts(CharSequence text, CharSequence that) throws AssertionException {
     if (null == text) {
-      throw new NullPointerException("text");
+      throw new AssertionException("text is null.");
     } else if (null == that) {
-      throw new NullPointerException("that");
+      throw new AssertionException("that is null.");
     } else if (!text.subSequence(0, that.length()).equals(that)) {
       throw new AssertionException(format("text[%s] does not start with that[%s].", text, that));
     }
@@ -2437,17 +2396,15 @@ public abstract class Asserts {
    * @param text    단정할 문자열.
    * @param that    비교할 문자열.
    * @param message 단정 실패시의 예외 메시지.
-   * @throws NullPointerException 문자열이 <code>null</code>인 경우.
-   * @throws AssertionException   단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void starts(CharSequence text, CharSequence that, String message)
-      throws NullPointerException, AssertionException {
+  public static void starts(CharSequence text, CharSequence that, String message) throws AssertionException {
     if (null == text) {
-      throw new NullPointerException("text");
+      throw new AssertionException(message, new NullPointerException("text is null."));
     } else if (null == that) {
-      throw new NullPointerException("that");
+      throw new AssertionException(message, new NullPointerException("that is null."));
     } else if (!text.subSequence(0, that.length()).equals(that)) {
       throw new AssertionException(message);
     }
@@ -2458,16 +2415,15 @@ public abstract class Asserts {
    *
    * @param string 단정할 문자열.
    * @param regex  기준 정규표현식.
-   * @throws NullPointerException 문자열이나 정규표현식이 <code>null</code>일 때.
-   * @throws AssertionException   단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void matches(CharSequence string, String regex) throws NullPointerException, AssertionException {
+  public static void matches(CharSequence string, String regex) throws AssertionException {
     if (null == string) {
-      throw new NullPointerException("string");
+      throw new AssertionException("string is null.");
     } else if (null == regex) {
-      throw new NullPointerException("regex");
+      throw new AssertionException("regex is null.");
     } else if (!(string instanceof String ? (String) string : string.toString()).matches(regex)) {
       throw new AssertionException(format("string[%s] does not match to regex[%s].", string, regex));
     }
@@ -2479,17 +2435,15 @@ public abstract class Asserts {
    * @param string  단정할 문자열.
    * @param regex   기준 정규표현식.
    * @param message 단정 실패시의 예외 메시지.
-   * @throws NullPointerException 문자열이나 정규표현식이 <code>null</code>일 때.
-   * @throws AssertionException   단정 실패.
+   * @throws AssertionException 단정 실패.
    * @author justburrow
    * @since 2016. 8. 1.
    */
-  public static void matches(CharSequence string, String regex, String message)
-      throws NullPointerException, AssertionException {
+  public static void matches(CharSequence string, String regex, String message) throws AssertionException {
     if (null == string) {
-      throw new NullPointerException("string");
+      throw new AssertionException(message, new NullPointerException("string is null."));
     } else if (null == regex) {
-      throw new NullPointerException("regex");
+      throw new AssertionException(message, new NullPointerException("regex is null."));
     } else if (!(string instanceof String ? (String) string : string.toString()).matches(regex)) {
       throw new AssertionException(message);
     }
@@ -2502,9 +2456,9 @@ public abstract class Asserts {
    * @throws NullPointerException <code>hash</code>가 <code>null</code>일 때.
    * @throws AssertionException
    */
-  public static void bcrypt(String hash) throws NullPointerException, AssertionException {
+  public static void bcrypt(String hash) throws AssertionException {
     if (null == hash) {
-      throw new NullPointerException("hash is null.");
+      throw new AssertionException("hash is null.");
     } else if (!hash.matches("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}")) {
       throw new AssertionException(format("hash[%s] is not a bcrypt hash string."));
     }
@@ -2515,12 +2469,11 @@ public abstract class Asserts {
    *
    * @param hash
    * @param message
-   * @throws NullPointerException <code>hash</code>가 <code>null</code>일 때.
    * @throws AssertionException
    */
-  public static void bcrypt(String hash, String message) throws NullPointerException, AssertionException {
+  public static void bcrypt(String hash, String message) throws AssertionException {
     if (null == hash) {
-      throw new NullPointerException("hash is null.");
+      throw new AssertionException(message, new NullPointerException("hash is null."));
     } else if (!hash.matches("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}")) {
       throw new AssertionException(message);
     }
@@ -2552,7 +2505,9 @@ public abstract class Asserts {
    * @since 2016. 9. 2.
    */
   public static <T> void notEmpty(T[] array, String message) throws AssertionException {
-    if (null == array || 0 == array.length) {
+    if (null == array) {
+      throw new AssertionException(message, new NullPointerException("array is null."));
+    } else if (0 == array.length) {
       throw new AssertionException(message);
     }
   }
