@@ -1,10 +1,7 @@
 package kr.lul.kobalttown.business.account.service;
 
 import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
-import kr.lul.kobalttown.business.account.service.params.CreateAccountParams;
-import kr.lul.kobalttown.business.account.service.params.IssueAccountResetCodeParams;
-import kr.lul.kobalttown.business.account.service.params.UpdateAccountParams;
-import kr.lul.kobalttown.business.account.service.params.UpdatePrincipalParams;
+import kr.lul.kobalttown.business.account.service.params.*;
 import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.util.PropertyException;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +21,13 @@ public interface AccountService {
   Account update(UpdateAccountParams params) throws PropertyException;
 
   Account update(UpdatePrincipalParams params);
+
+  /**
+   * @param params
+   * @return
+   * @@since 2017. 10. 8.
+   */
+  Account issue(IssueAccountActivateCodeParams params);
 
   /**
    * 연락용 E-Mail를 기준으로 계정을 재설정할 수 있는 코드를 만들고, 연락용 메일로 코드를 전송한다.

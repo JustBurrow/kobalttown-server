@@ -1,9 +1,11 @@
 package kr.lul.kobalttown.ms.account.web.controller;
 
+import kr.lul.kobalttown.business.account.exception.AccountStateException;
 import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.business.exception.DataNotExistException;
 import kr.lul.kobalttown.domain.account.AccountPrincipalType;
 import kr.lul.kobalttown.ms.account.borderline.AccountBorderline;
+import kr.lul.kobalttown.ms.account.borderline.cmd.IssueAccountActivateCode;
 import kr.lul.kobalttown.ms.account.borderline.cmd.IssueAccountResetCodeCmd;
 import kr.lul.kobalttown.ms.account.borderline.cmd.UpdateAccountBasicCmd;
 import kr.lul.kobalttown.ms.account.borderline.cmd.UpdatePasswordCmd;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import javax.validation.Valid;
 
 import static java.lang.String.format;
+import static kr.lul.kobalttown.util.Asserts.notNull;
 
 /**
  * @author justburrow
@@ -64,22 +67,28 @@ import static java.lang.String.format;
       log.trace(format("issueAcivate args : model=%s", model));
     }
 
-    // TODO 활성화 하지 않은 계정의 활성화 코드 신규 발급.
-
     return "accounts/activate-issue";
   }
 
   @Override
-  public String issueAcivate(
-      @ModelAttribute("issueReq") @Valid final IssueActivateCodeReq issueReq, final BindingResult binding,
-      final Model model) {
+  public String issueAcivate(final IssueActivateCodeReq issueReq, final BindingResult binding, final Model model) {
     if (log.isTraceEnabled()) {
       log.trace(format("issueAcivate args : issueReq=%s, binding=%s, model=%s", issueReq, binding, model));
     }
+    notNull(issueReq, "issueReq");
+    notNull(binding, "binding");
+    notNull(model, "model");
 
-    // TODO 활성화 하지 않은 계정의 활성화 코드 신규 발급.
+    IssueAccountActivateCode cmd = new IssueAccountActivateCode();
+    cmd.setEmail(issueReq.getEmail());
+    AccountDto account;
+    try {
+      account = this.accountBorderline.issue(cmd).val();
+    } catch (AccountStateException e) {
+      return "accounts/activate-issue-fail";
+    }
 
-    return null;
+    return "accounts/activate-issued";
   }
 
   @Override

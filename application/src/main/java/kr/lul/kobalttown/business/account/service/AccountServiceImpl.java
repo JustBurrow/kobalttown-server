@@ -3,10 +3,7 @@ package kr.lul.kobalttown.business.account.service;
 import kr.lul.kobalttown.business.account.dao.AccountDao;
 import kr.lul.kobalttown.business.account.exception.AccountStateException;
 import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
-import kr.lul.kobalttown.business.account.service.params.CreateAccountParams;
-import kr.lul.kobalttown.business.account.service.params.IssueAccountResetCodeParams;
-import kr.lul.kobalttown.business.account.service.params.UpdateAccountParams;
-import kr.lul.kobalttown.business.account.service.params.UpdatePrincipalParams;
+import kr.lul.kobalttown.business.account.service.params.*;
 import kr.lul.kobalttown.business.exception.DataNotExistException;
 import kr.lul.kobalttown.business.message.exception.MessageException;
 import kr.lul.kobalttown.business.message.service.MessageService;
@@ -72,6 +69,24 @@ import static kr.lul.kobalttown.util.Asserts.*;
   @Autowired
   private PasswordEncoder    passwordEncoder;
 
+  private void doSendActivateMail(AccountCode activateCode) {
+    notNull(activateCode, "activateCode");
+    try {
+      TemplateMessageParams msg = new TemplateEmailMessageParams(
+          new EmailAddress(this.accountActivateSender, this.accountActivateName),
+          new EmailAddress(activateCode.getAccount().getEmail(), activateCode.getAccount().getName()),
+          this.accountActivateSubject, this.accountActivateTemplate,
+          Maps.<String, Object>hashmap("account", activateCode.getAccount())
+              .put("host", this.accountActivateHost)
+              .put("code", activateCode.getCode())
+              .put("expire", activateCode.getExpire())
+              .build());
+      this.messageService.send(msg);
+    } catch (MessageException e) {
+      log.error(format("fail to send account activate code : activateCode=%s", activateCode), e);
+    }
+  }
+
   @Override
   public Account create(CreateAccountParams params) {
     if (log.isTraceEnabled()) {
@@ -91,20 +106,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
     AccountCode activateCode = this.accountCodeService.createAcitivateCode(account);
 
     // send email
-    try {
-      TemplateMessageParams msg = new TemplateEmailMessageParams(
-          new EmailAddress(this.accountActivateSender, this.accountActivateName),
-          new EmailAddress(account.getEmail(), account.getName()),
-          this.accountActivateSubject, this.accountActivateTemplate,
-          Maps.<String, Object>hashmap("account", account)
-              .put("host", this.accountActivateHost)
-              .put("code", activateCode.getCode())
-              .put("expire", activateCode.getExpire())
-              .build());
-      this.messageService.send(msg);
-    } catch (MessageException e) {
-      log.error(format("fail to send account activate code : account=%s", account), e);
-    }
+    doSendActivateMail(activateCode);
 
     if (log.isTraceEnabled()) {
       log.trace(format("result : account=%s", account));
@@ -210,6 +212,30 @@ import static kr.lul.kobalttown.util.Asserts.*;
       log.trace(format("update result : principal=%s", principal));
     }
     return principal.getAccount();
+  }
+
+  @Override
+  public Account issue(IssueAccountActivateCodeParams params) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("issue args : params=%s", params));
+    }
+
+    notNull(params, "params");
+
+    Account account = this.accountDao.selectEmail(params.getEmail());
+    if (null == account) {
+      throw new DataNotExistException(format("account does not exist : email='%s'", params.getEmail()));
+    } else if (account.isEnable()) {
+      throw new AccountStateException(format("already activated account : %s", account));
+    }
+
+    AccountCode aac = this.accountCodeService.createAcitivateCode(account);
+    doSendActivateMail(aac);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("issue return : %s", account));
+    }
+    return account;
   }
 
   /**

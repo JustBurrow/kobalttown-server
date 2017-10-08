@@ -1,6 +1,10 @@
 package kr.lul.kobalttown.ms.account.web.controller.req;
 
 import lombok.Data;
+import lombok.NonNull;
+import org.hibernate.validator.constraints.Email;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author justburrow
@@ -8,4 +12,11 @@ import lombok.Data;
  */
 @Data
 public class IssueActivateCodeReq {
+  @NonNull
+  @NotNull
+  @Email
+  private String email;
+
+  public IssueActivateCodeReq() {
+  }
 }

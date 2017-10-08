@@ -2,16 +2,10 @@ package kr.lul.kobalttown.ms.account.borderline;
 
 import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.business.account.service.AccountService;
-import kr.lul.kobalttown.business.account.service.params.CreateAccountParams;
-import kr.lul.kobalttown.business.account.service.params.IssueAccountResetCodeParams;
-import kr.lul.kobalttown.business.account.service.params.UpdateAccountParams;
-import kr.lul.kobalttown.business.account.service.params.UpdatePrincipalParams;
+import kr.lul.kobalttown.business.account.service.params.*;
 import kr.lul.kobalttown.business.exception.DataNotExistException;
 import kr.lul.kobalttown.domain.account.Account;
-import kr.lul.kobalttown.ms.account.borderline.cmd.CreateAccountCmd;
-import kr.lul.kobalttown.ms.account.borderline.cmd.IssueAccountResetCodeCmd;
-import kr.lul.kobalttown.ms.account.borderline.cmd.UpdateAccountBasicCmd;
-import kr.lul.kobalttown.ms.account.borderline.cmd.UpdatePasswordCmd;
+import kr.lul.kobalttown.ms.account.borderline.cmd.*;
 import kr.lul.kobalttown.ms.account.borderline.converter.AccountConverter;
 import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
 import kr.lul.kobalttown.util.Lazy;
@@ -127,6 +121,20 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     if (log.isTraceEnabled()) {
       log.trace(format("activate result : account=%s", account));
     }
+    return () -> this.accountConverter.convert(account, AccountDto.class);
+  }
+
+  @Override
+  public Lazy<AccountDto> issue(IssueAccountActivateCode cmd) {
+    if (log.isTraceEnabled()) {
+      log.trace(String.format("issue args : cmd=%s", cmd));
+    }
+    notNull(cmd, "cmd");
+
+    IssueAccountActivateCodeParams params = new IssueAccountActivateCodeParams();
+    params.setEmail(cmd.getEmail());
+    Account account = this.accountService.issue(params);
+
     return () -> this.accountConverter.convert(account, AccountDto.class);
   }
 
