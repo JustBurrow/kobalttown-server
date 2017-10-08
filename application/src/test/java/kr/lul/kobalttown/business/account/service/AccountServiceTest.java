@@ -67,7 +67,8 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
         new CreateAccountParams(null, randomAlphanumeric(R.in(1, 10)),
                                 this.passwordEncoder.encode(random(R.in(1, 10))))))
         .isInstanceOf(AssertionException.class)
-        .hasMessage("params.email");
+        .hasCauseInstanceOf(NullPointerException.class)
+        .hasMessage("email");
   }
 
   @Test
@@ -79,7 +80,8 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
     // When & Then
     assertThatThrownBy(() -> this.accountService.create(params))
         .isInstanceOf(AssertionException.class)
-        .hasMessage("params.password");
+        .hasCauseInstanceOf(NullPointerException.class)
+        .hasMessage("privateKey");
   }
 
   @Test
@@ -92,7 +94,7 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
     // When & Then
     assertThatThrownBy(() -> this.accountService.create(params))
         .isInstanceOf(AssertionException.class)
-        .hasMessage("params.password");
+        .hasMessage("privateKey");
   }
 
   @Test
