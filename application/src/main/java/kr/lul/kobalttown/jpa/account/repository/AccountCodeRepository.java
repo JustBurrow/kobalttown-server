@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
  * @since 2017. 9. 6.
  */
 @Repository
-public interface AccountActivateCodeRepository extends JpaRepository<AbstractAccountCode, Long> {
+public interface AccountCodeRepository extends JpaRepository<AbstractAccountCode, Long> {
   AbstractAccountCode findOneByAccount(Account account);
 
   long countByTypeAndCode(AccountCodeType type, String code);

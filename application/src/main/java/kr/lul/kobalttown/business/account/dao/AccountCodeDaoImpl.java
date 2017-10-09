@@ -4,7 +4,7 @@ import kr.lul.kobalttown.domain.account.Account;
 import kr.lul.kobalttown.domain.account.AccountCode;
 import kr.lul.kobalttown.domain.account.AccountCodeType;
 import kr.lul.kobalttown.jpa.account.entity.AbstractAccountCode;
-import kr.lul.kobalttown.jpa.account.repository.AccountActivateCodeRepository;
+import kr.lul.kobalttown.jpa.account.repository.AccountCodeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
   private static final Logger log = LoggerFactory.getLogger(AccountCodeDao.class);
 
   @Autowired
-  private AccountActivateCodeRepository accountActivateCodeRepository;
+  private AccountCodeRepository accountCodeRepository;
 
   @Override
   public AccountCode insert(AccountCode ac) {
@@ -31,11 +31,11 @@ import static kr.lul.kobalttown.util.Asserts.*;
     }
     notNull(ac, "ac");
 
-    if (0L < this.accountActivateCodeRepository.countByTypeAndCode(ac.getType(), ac.getCode())) {
+    if (0L < this.accountCodeRepository.countByTypeAndCode(ac.getType(), ac.getCode())) {
       throw new IllegalArgumentException(format("alread exist code : %s", ac.getCode()));
     }
 
-    ac = this.accountActivateCodeRepository.save((AbstractAccountCode) ac);
+    ac = this.accountCodeRepository.save((AbstractAccountCode) ac);
 
     if (log.isTraceEnabled()) {
       log.trace(format("insert return : %s", ac));
@@ -51,7 +51,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
     notNull(type, "type");
     matches(code, CODE_PATTERN, "code");
 
-    AbstractAccountCode activateCode = this.accountActivateCodeRepository.findOneByTypeAndCode(type, code);
+    AbstractAccountCode activateCode = this.accountCodeRepository.findOneByTypeAndCode(type, code);
 
     if (log.isTraceEnabled()) {
       log.trace(format("select return : %s", activateCode));
@@ -67,7 +67,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
     notNull(type, "type");
     matches(code, CODE_PATTERN, "code");
 
-    long count = this.accountActivateCodeRepository.countByTypeAndCode(type, code);
+    long count = this.accountCodeRepository.countByTypeAndCode(type, code);
 
     if (log.isTraceEnabled()) {
       log.trace(format("count return : %s", code));
@@ -84,7 +84,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
     notNull(account, "account");
     positive(account.getId(), "account.id");
 
-    boolean exists = this.accountActivateCodeRepository.existsByTypeAndAccount(type, account);
+    boolean exists = this.accountCodeRepository.existsByTypeAndAccount(type, account);
 
     if (log.isTraceEnabled()) {
       log.trace(format("isExist return : %b", exists));
@@ -101,6 +101,6 @@ import static kr.lul.kobalttown.util.Asserts.*;
     notNull(account, "account");
     positive(account.getId(), "account.id");
 
-    this.accountActivateCodeRepository.deleteByTypeAndAccount(type, account);
+    this.accountCodeRepository.deleteByTypeAndAccount(type, account);
   }
 }

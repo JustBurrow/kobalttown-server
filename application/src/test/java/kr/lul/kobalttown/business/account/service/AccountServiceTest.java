@@ -5,7 +5,7 @@ import kr.lul.kobalttown.business.account.service.params.UpdatePrincipalParams;
 import kr.lul.kobalttown.domain.account.*;
 import kr.lul.kobalttown.jpa.account.entity.AbstractAccountCode;
 import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEntity;
-import kr.lul.kobalttown.jpa.account.repository.AccountActivateCodeRepository;
+import kr.lul.kobalttown.jpa.account.repository.AccountCodeRepository;
 import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalEmailRepository;
 import kr.lul.kobalttown.util.AssertionException;
 import kr.lul.kobalttown.util.EmailUtils;
@@ -40,7 +40,7 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
   private String domain;
 
   @Autowired
-  private AccountActivateCodeRepository   accountActivateCodeRepository;
+  private AccountCodeRepository           accountCodeRepository;
   @Autowired
   private AccountPrincipalEmailRepository accountPrincipalEmailRepository;
 
@@ -49,7 +49,7 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
   public void setUp() throws Exception {
     super.setUp();
 
-    assertThat(this.accountActivateCodeRepository).isNotNull();
+    assertThat(this.accountCodeRepository).isNotNull();
     assertThat(this.accountPrincipalEmailRepository).isNotNull();
   }
 
@@ -118,7 +118,7 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
         .isAfterOrEqualTo(this.before)
         .isEqualTo(account.getUpdate());
 
-    AbstractAccountCode aac = this.accountActivateCodeRepository.findOneByAccount(account);
+    AbstractAccountCode aac = this.accountCodeRepository.findOneByAccount(account);
     assertThat(aac)
         .isNotNull()
         .extracting(AccountCode::getAccount, AccountCode::getUsed)
