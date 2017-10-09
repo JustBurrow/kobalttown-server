@@ -42,6 +42,47 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
   @Autowired
   private AuthService       authService;
 
+  private String doSettingsForm(final AuthUser user, final Model model) {
+    AccountDto account = this.accountBorderline.read(user.getId()).val();
+
+    EditBasicReq basicReq;
+    if (model.containsAttribute("basicReq")) {
+      basicReq = (EditBasicReq) model.asMap().get("basicReq");
+      basicReq.setName(account.getName());
+    } else {
+      basicReq = new EditBasicReq();
+      basicReq.setName(account.getName());
+      model.addAttribute("basicReq", basicReq);
+    }
+
+    if (model.containsAttribute("passwordReq")) {
+      ((EditPasswordReq) model.asMap().get("passwordReq")).init();
+    } else {
+      model.addAttribute("passwordReq", new EditPasswordReq());
+    }
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("doSettingsForm result : model=%s", model));
+    }
+    return "accounts/settings";
+  }
+
+  private void doResetForm(String code, Model model) throws PropertyException {
+    ReadAccountCodeCmd cmd = new ReadAccountCodeCmd();
+    cmd.setType(AccountCodeType.RESET);
+    cmd.setCode(code);
+
+    AccountDto account = this.accountBorderline.read(cmd).val();
+    if (log.isTraceEnabled()) {
+      log.trace(format("account=%s", account));
+    }
+
+    model.addAttribute("code", code);
+    if (!model.containsAttribute("resetReq")) {
+      model.addAttribute("resetReq", new ResetAccountReq());
+    }
+  }
+
   @Override
   public String profile(final AuthUser user, final Model model) {
     if (log.isTraceEnabled()) {
@@ -151,22 +192,6 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     }
   }
 
-  private void doResetForm(String code, Model model) throws PropertyException {
-    ReadAccountCodeCmd cmd = new ReadAccountCodeCmd();
-    cmd.setType(AccountCodeType.RESET);
-    cmd.setCode(code);
-
-    AccountDto account = this.accountBorderline.read(cmd).val();
-    if (log.isTraceEnabled()) {
-      log.trace(format("account=%s", account));
-    }
-
-    model.addAttribute("code", code);
-    if (!model.containsAttribute("resetReq")) {
-      model.addAttribute("resetReq", new ResetAccountReq());
-    }
-  }
-
   @Override
   public String reset(@PathVariable("code") String code, ResetAccountReq req, BindingResult binding, Model model) {
     if (log.isTraceEnabled()) {
@@ -220,7 +245,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
       log.trace(format("settings args : model=%s", model));
     }
 
-    return formSettings(user, model);
+    return doSettingsForm(user, model);
   }
 
   @Override
@@ -233,7 +258,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     }
 
     if (binding.hasErrors()) {
-      return formSettings(user, model);
+      return doSettingsForm(user, model);
     }
 
     UpdateAccountBasicCmd cmd = new UpdateAccountBasicCmd(user);
@@ -244,38 +269,13 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
       for (CauseProperty p : e.getProperties()) {
         binding.addError(new FieldError("basicReq", p.getName(), p.getMessage()));
       }
-      return formSettings(user, model);
+      return doSettingsForm(user, model);
     }
 
     if (log.isTraceEnabled()) {
       log.trace(format("setting result : model=%s", model));
     }
     return "redirect:/accounts";
-  }
-
-  private String formSettings(final AuthUser user, final Model model) {
-    AccountDto account = this.accountBorderline.read(user.getId()).val();
-
-    EditBasicReq basicReq;
-    if (model.containsAttribute("basicReq")) {
-      basicReq = (EditBasicReq) model.asMap().get("basicReq");
-      basicReq.setName(account.getName());
-    } else {
-      basicReq = new EditBasicReq();
-      basicReq.setName(account.getName());
-      model.addAttribute("basicReq", basicReq);
-    }
-
-    if (model.containsAttribute("passwordReq")) {
-      ((EditPasswordReq) model.asMap().get("passwordReq")).init();
-    } else {
-      model.addAttribute("passwordReq", new EditPasswordReq());
-    }
-
-    if (log.isTraceEnabled()) {
-      log.trace(format("formSettings result : model=%s", model));
-    }
-    return "accounts/settings";
   }
 
   @Override
@@ -292,7 +292,7 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
       binding.addError(new FieldError("passwordReq", "confirm", "비밀번호가 일치하지 않습니다."));
     }
     if (binding.hasErrors()) {
-      return formSettings(user, model);
+      return doSettingsForm(user, model);
     }
 
     UpdatePasswordCmd cmd = new UpdatePasswordCmd(user);

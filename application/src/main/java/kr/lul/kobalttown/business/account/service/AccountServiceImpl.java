@@ -16,6 +16,7 @@ import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEmailEntity;
 import kr.lul.kobalttown.util.Maps;
 import kr.lul.kobalttown.util.PropertyException;
 import kr.lul.kobalttown.util.PropertyException.CauseProperty;
+import kr.lul.kobalttown.util.TimeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,8 @@ import static kr.lul.kobalttown.util.Asserts.*;
   private MessageService     messageService;
   @Autowired
   private PasswordEncoder    passwordEncoder;
+  @Autowired
+  private TimeProvider       timeProvider;
 
   private void doSendActivateMail(AccountCode activateCode) {
     notNull(activateCode, "activateCode");
@@ -141,8 +144,9 @@ import static kr.lul.kobalttown.util.Asserts.*;
     equal(params.getType(), AccountCodeType.RESET, "params.type");
 
     AccountCode arc = this.accountCodeService.readResetCode(params.getCode());
-    if (null == arc) {
-      throw new DataNotExistException(format("account reset code does not exist : code='%s'", params.getCode()));
+    if (null == arc || arc.getExpire().isBefore(this.timeProvider.now())) {
+      throw new DataNotExistException(
+          format("account reset code does not exist or expired : code='%s'", params.getCode()));
     } else if (arc.isUsed()) {
       throw new PropertyException("already used account reset code.", new CauseProperty("used", arc, "already used."));
     }
@@ -176,8 +180,8 @@ import static kr.lul.kobalttown.util.Asserts.*;
     matches(code, CODE_PATTERN, "code");
 
     AccountCode activateCode = this.accountCodeService.readActivateCode(code);
-    if (null == activateCode) {
-      throw new DataNotExistException(format("account activate code : %s", code));
+    if (null == activateCode || activateCode.getExpire().isBefore(this.timeProvider.now())) {
+      throw new DataNotExistException(format("account activate code or expired : %s", code));
     } else if (activateCode.isUsed()) {
       throw new IllegalAccountActivateCodeException(code, format("account activate code : %s", activateCode));
     }
@@ -199,8 +203,9 @@ import static kr.lul.kobalttown.util.Asserts.*;
     notNull(params, "params");
 
     AccountCode code = this.accountCodeService.readResetCode(params.getCode());
-    if (null == code) {
-      throw new DataNotExistException(format("account reset code does not exist : code='%s'", params.getCode()));
+    if (null == code || code.getExpire().isBefore(this.timeProvider.now())) {
+      throw new DataNotExistException(
+          format("account reset code does not exist or expired : code='%s'", params.getCode()));
     }
 
     if (!params.getAccount().equals(code.getAccount())) {
