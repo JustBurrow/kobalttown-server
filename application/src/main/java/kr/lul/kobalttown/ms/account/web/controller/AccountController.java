@@ -1,9 +1,6 @@
 package kr.lul.kobalttown.ms.account.web.controller;
 
-import kr.lul.kobalttown.ms.account.web.controller.req.EditBasicReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.EditPasswordReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.IssueAccountResetCodeReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.IssueActivateCodeReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.*;
 import kr.lul.kobalttown.support.security.AuthUser;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -95,6 +92,11 @@ public interface AccountController {
    */
   @GetMapping("/reset/{code:" + CODE_PATTERN + "}")
   String reset(@PathVariable("code") final String code, final Model model);
+
+  @PatchMapping("/reset/{code:" + CODE_PATTERN + "}")
+  String reset(
+      @PathVariable("code") String code, @ModelAttribute @Valid ResetAccountReq req, BindingResult binding,
+      Model model);
 
   /**
    * 기본 설정 변경하기.

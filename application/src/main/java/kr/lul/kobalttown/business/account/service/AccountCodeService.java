@@ -32,4 +32,11 @@ public interface AccountCodeService {
    * @return
    */
   AccountCodeReset createReset(Account account);
+
+  /**
+   * @param code
+   * @return
+   * @@since 2017. 10. 9.
+   */
+  AccountCode readResetCode(String code);
 }

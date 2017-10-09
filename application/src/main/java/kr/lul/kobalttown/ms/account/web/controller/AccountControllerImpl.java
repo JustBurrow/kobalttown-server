@@ -3,17 +3,12 @@ package kr.lul.kobalttown.ms.account.web.controller;
 import kr.lul.kobalttown.business.account.exception.AccountStateException;
 import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
 import kr.lul.kobalttown.business.exception.DataNotExistException;
+import kr.lul.kobalttown.domain.account.AccountCodeType;
 import kr.lul.kobalttown.domain.account.AccountPrincipalType;
 import kr.lul.kobalttown.ms.account.borderline.AccountBorderline;
-import kr.lul.kobalttown.ms.account.borderline.cmd.IssueAccountActivateCode;
-import kr.lul.kobalttown.ms.account.borderline.cmd.IssueAccountResetCodeCmd;
-import kr.lul.kobalttown.ms.account.borderline.cmd.UpdateAccountBasicCmd;
-import kr.lul.kobalttown.ms.account.borderline.cmd.UpdatePasswordCmd;
+import kr.lul.kobalttown.ms.account.borderline.cmd.*;
 import kr.lul.kobalttown.ms.account.borderline.dto.AccountDto;
-import kr.lul.kobalttown.ms.account.web.controller.req.EditBasicReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.EditPasswordReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.IssueAccountResetCodeReq;
-import kr.lul.kobalttown.ms.account.web.controller.req.IssueActivateCodeReq;
+import kr.lul.kobalttown.ms.account.web.controller.req.*;
 import kr.lul.kobalttown.support.security.AuthService;
 import kr.lul.kobalttown.support.security.AuthUser;
 import kr.lul.kobalttown.util.PropertyException;
@@ -139,12 +134,82 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
   @Override
   public String reset(@PathVariable("code") final String code, final Model model) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("reset args : code='%s', model=%s", code, model));
+      log.trace(format("reset args : code='%s', model=%s", code, model));
     }
 
-    // TODO 계정 재설정 폼.
+    try {
+      doResetForm(code, model);
+      if (log.isTraceEnabled()) {
+        log.trace(format("reset result : model=%s", model));
+      }
+      return "accounts/reset";
+    } catch (Exception e) {
+      log.warn("can not reset account.", e);
+      return "accounts/reset-disable";
+    }
+  }
 
-    return "accounts/reset-success";
+  private void doResetForm(String code, Model model) throws PropertyException {
+    ReadAccountCodeCmd cmd = new ReadAccountCodeCmd();
+    cmd.setType(AccountCodeType.RESET);
+    cmd.setCode(code);
+
+    AccountDto account = this.accountBorderline.read(cmd).val();
+    if (log.isTraceEnabled()) {
+      log.trace(format("account=%s", account));
+    }
+
+    model.addAttribute("code", code);
+    if (!model.containsAttribute("resetReq")) {
+      model.addAttribute("resetReq", new ResetAccountReq());
+    }
+  }
+
+  @Override
+  public String reset(@PathVariable("code") String code, ResetAccountReq req, BindingResult binding, Model model) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("reset args : code='%s', req=%s, binding=%s, model=%s", code, req, binding, model));
+    }
+
+    if (null != req.getPassword() && !req.getPassword().equals(req.getConfirm())) {
+      binding.addError(new FieldError("resetReq", "confirm", "재입력한 비밀번호가 다릅니다."));
+    }
+
+    if (!binding.hasErrors()) {
+      ResetAccountCmd cmd = new ResetAccountCmd();
+      cmd.setEmail(req.getEmail());
+      cmd.setCode(code);
+      cmd.setPassword(req.getPassword());
+
+      try {
+        AccountDto account = this.accountBorderline.reset(cmd).val();
+      } catch (PropertyException e) {
+        log.warn(format("fail to reset account : req=%s", req), e);
+
+        for (CauseProperty p : e.getProperties()) {
+          binding.addError(new FieldError("resetReq", p.getName(), p.getMessage()));
+        }
+      }
+    }
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("reset result : binding=%s, model=%s", binding, model));
+    }
+
+    if (binding.hasErrors()) {
+      req.setPassword(null);
+      req.setConfirm(null);
+
+      try {
+        doResetForm(code, model);
+        return "accounts/reset";
+      } catch (PropertyException e) {
+        log.warn(format("fail to reset account : code='%s', req=%s", code, req), e);
+        return "accounts/reset-disable";
+      }
+    } else {
+      return "accounts/reset-success";
+    }
   }
 
   @Override

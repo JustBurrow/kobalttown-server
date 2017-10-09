@@ -17,8 +17,7 @@ import java.time.Instant;
 
 import static java.lang.String.format;
 import static kr.lul.kobalttown.domain.account.AccountCode.TTL;
-import static kr.lul.kobalttown.util.Asserts.hasLength;
-import static kr.lul.kobalttown.util.Asserts.notNull;
+import static kr.lul.kobalttown.util.Asserts.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 /**
@@ -36,7 +35,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
   @Override
   public AccountCode createAcitivateCode(Account account) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("createAcitivateCode args : account=%s", account));
+      log.trace(format("createAcitivateCode args : account=%s", account));
     }
     notNull(account, "account");
 
@@ -69,7 +68,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
     AccountCode activateCode = this.accountCodeDao.select(AccountCodeType.ACTIVATE, code);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("readActivateCode return : %s", activateCode));
+      log.trace(format("readActivateCode return : %s", activateCode));
     }
     return activateCode;
   }
@@ -77,7 +76,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
   @Override
   public AccountCodeReset createReset(Account account) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("createReset args : account=%s", account));
+      log.trace(format("createReset args : account=%s", account));
     }
     notNull(account, "account");
 
@@ -96,8 +95,24 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
     acr = (AccountCodeResetEntity) this.accountCodeDao.insert(acr);
 
     if (log.isTraceEnabled()) {
-      log.trace(String.format("createReset return : %s", acr));
+      log.trace(format("createReset return : %s", acr));
     }
     return acr;
+  }
+
+  @Override
+  public AccountCode readResetCode(String code) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("readResetCode args : code='%s'", code));
+    }
+
+    matches(code, AccountCode.CODE_PATTERN, "code");
+
+    AccountCode accountCode = this.accountCodeDao.select(AccountCodeType.RESET, code);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("readResetCode return : %s", accountCode));
+    }
+    return accountCode;
   }
 }

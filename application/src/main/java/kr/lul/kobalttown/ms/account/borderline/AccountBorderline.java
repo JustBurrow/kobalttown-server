@@ -17,11 +17,16 @@ public interface AccountBorderline {
 
   Lazy<AccountDto> read(long id);
 
+  /**
+   * @param cmd
+   * @return
+   * @@since 2017. 10. 9.
+   */
+  Lazy<AccountDto> read(ReadAccountCodeCmd cmd) throws PropertyException;
+
   Lazy<AccountDto> update(UpdateAccountBasicCmd cmd) throws PropertyException;
 
   Lazy<AccountDto> update(UpdatePasswordCmd cmd);
-
-  Lazy<AccountDto> activate(String code) throws IllegalAccountActivateCodeException;
 
   /**
    * @param cmd
@@ -36,4 +41,13 @@ public interface AccountBorderline {
    * @@since 2017. 9. 28.
    */
   Lazy<AccountDto> issue(IssueAccountResetCodeCmd cmd);
+
+  Lazy<AccountDto> activate(String code) throws IllegalAccountActivateCodeException;
+
+  /**
+   * @param cmd
+   * @return
+   * @@since 2017. 10. 9.
+   */
+  Lazy<AccountDto> reset(ResetAccountCmd cmd) throws PropertyException;
 }

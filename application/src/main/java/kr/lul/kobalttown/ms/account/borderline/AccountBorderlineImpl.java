@@ -1,7 +1,9 @@
 package kr.lul.kobalttown.ms.account.borderline;
 
 import kr.lul.kobalttown.business.account.exception.IllegalAccountActivateCodeException;
+import kr.lul.kobalttown.business.account.service.AccountCodeService;
 import kr.lul.kobalttown.business.account.service.AccountService;
+import kr.lul.kobalttown.business.account.service.ResetAccountParams;
 import kr.lul.kobalttown.business.account.service.params.*;
 import kr.lul.kobalttown.business.exception.DataNotExistException;
 import kr.lul.kobalttown.domain.account.Account;
@@ -28,9 +30,11 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
   private static final Logger log = LoggerFactory.getLogger(AccountBorderline.class);
 
   @Autowired
-  private AccountService   accountService;
+  private AccountService     accountService;
   @Autowired
-  private AccountConverter accountConverter;
+  private AccountCodeService accountCodeService;
+  @Autowired
+  private AccountConverter   accountConverter;
 
   @Override
   public Lazy<AccountDto> create(CreateAccountCmd cmd) {
@@ -55,6 +59,24 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
     }
 
     Account account = this.accountService.read(id);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("read result : account=%s", account));
+    }
+    return () -> this.accountConverter.convert(account, AccountDto.class);
+  }
+
+  @Override
+  public Lazy<AccountDto> read(ReadAccountCodeCmd cmd) throws PropertyException {
+    if (log.isTraceEnabled()) {
+      log.trace(format("read args : cmd=%s", cmd));
+    }
+    notNull(cmd, "cmd");
+
+    ReadAccountCodeParams params = new ReadAccountCodeParams();
+    params.setType(cmd.getType());
+    params.setCode(cmd.getCode());
+    Account account = this.accountService.read(params);
 
     if (log.isTraceEnabled()) {
       log.trace(format("read result : account=%s", account));
@@ -110,24 +132,9 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
   }
 
   @Override
-  public Lazy<AccountDto> activate(String code) throws IllegalAccountActivateCodeException {
-    if (log.isTraceEnabled()) {
-      log.trace(format("activate args : code='%s'", code));
-    }
-    matches(code, CODE_PATTERN, "code");
-
-    Account account = this.accountService.activate(code);
-
-    if (log.isTraceEnabled()) {
-      log.trace(format("activate result : account=%s", account));
-    }
-    return () -> this.accountConverter.convert(account, AccountDto.class);
-  }
-
-  @Override
   public Lazy<AccountDto> issue(IssueAccountActivateCode cmd) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("issue args : cmd=%s", cmd));
+      log.trace(format("issue args : cmd=%s", cmd));
     }
     notNull(cmd, "cmd");
 
@@ -157,6 +164,47 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
 
     if (log.isTraceEnabled()) {
       log.trace(format("issue result : account=%s", account));
+    }
+    return () -> this.accountConverter.convert(account, AccountDto.class);
+  }
+
+  @Override
+  public Lazy<AccountDto> activate(String code) throws IllegalAccountActivateCodeException {
+    if (log.isTraceEnabled()) {
+      log.trace(format("activate args : code='%s'", code));
+    }
+    matches(code, CODE_PATTERN, "code");
+
+    Account account = this.accountService.activate(code);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("activate result : account=%s", account));
+    }
+    return () -> this.accountConverter.convert(account, AccountDto.class);
+  }
+
+  @Override
+  public Lazy<AccountDto> reset(ResetAccountCmd cmd) throws PropertyException {
+    if (log.isTraceEnabled()) {
+      log.trace(format("reset args : cmd=%s", cmd));
+    }
+
+    notNull(cmd, "cmd");
+
+    Account target = this.accountService.read(cmd.getEmail());
+    if (null == target) {
+      throw new DataNotExistException(format("account does not exist : email='%s'", cmd.getEmail()));
+    }
+
+    ResetAccountParams params = new ResetAccountParams();
+    params.setAccount(target);
+    params.setCode(cmd.getCode());
+    params.setPassword(cmd.getPassword());
+
+    Account account = this.accountService.reset(params);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("reset result : account=%s", account));
     }
     return () -> this.accountConverter.convert(account, AccountDto.class);
   }

@@ -10,10 +10,7 @@ import kr.lul.kobalttown.business.message.service.MessageService;
 import kr.lul.kobalttown.business.message.service.params.EmailAddress;
 import kr.lul.kobalttown.business.message.service.params.TemplateEmailMessageParams;
 import kr.lul.kobalttown.business.message.service.params.TemplateMessageParams;
-import kr.lul.kobalttown.domain.account.Account;
-import kr.lul.kobalttown.domain.account.AccountCode;
-import kr.lul.kobalttown.domain.account.AccountCodeReset;
-import kr.lul.kobalttown.domain.account.AccountPrincipal;
+import kr.lul.kobalttown.domain.account.*;
 import kr.lul.kobalttown.jpa.account.entity.AccountEntity;
 import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEmailEntity;
 import kr.lul.kobalttown.util.Maps;
@@ -130,6 +127,42 @@ import static kr.lul.kobalttown.util.Asserts.*;
   }
 
   @Override
+  public Account read(ReadAccountCodeParams params) throws PropertyException {
+    if (log.isTraceEnabled()) {
+      log.trace(format("read args : params=%s", params));
+    }
+
+    notNull(params, "params");
+    equal(params.getType(), AccountCodeType.RESET, "params.type");
+
+    AccountCode arc = this.accountCodeService.readResetCode(params.getCode());
+    if (null == arc) {
+      throw new DataNotExistException(format("account reset code does not exist : code='%s'", params.getCode()));
+    } else if (arc.isUsed()) {
+      throw new PropertyException("already used account reset code.", new CauseProperty("used", arc, "already used."));
+    }
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("read return : %s", arc.getAccount()));
+    }
+    return arc.getAccount();
+  }
+
+  @Override
+  public Account read(String email) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("read args : email='%s'", email));
+    }
+
+    Account account = this.accountDao.selectEmail(email);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("read return : %s", account));
+    }
+    return account;
+  }
+
+  @Override
   public Account activate(String code) throws IllegalAccountActivateCodeException {
     if (log.isTraceEnabled()) {
       log.trace(format("activate args : code='%s'", code));
@@ -150,6 +183,38 @@ import static kr.lul.kobalttown.util.Asserts.*;
       log.trace(format("activate return : %s", account));
     }
     return account;
+  }
+
+  @Override
+  public Account reset(ResetAccountParams params) throws PropertyException {
+    if (log.isTraceEnabled()) {
+      log.trace(format("reset args : params=%s", params));
+    }
+
+    notNull(params, "params");
+
+    AccountCode code = this.accountCodeService.readResetCode(params.getCode());
+    if (null == code) {
+      throw new DataNotExistException(format("account reset code does not exist : code='%s'", params.getCode()));
+    }
+
+    if (!params.getAccount().equals(code.getAccount())) {
+      throw new PropertyException("account does not match.", new CauseProperty("account", code.getAccount()));
+    }
+
+    code.use();
+
+    AccountPrincipal old = this.accountDao.selectPrincipal(AccountPrincipalType.EMAIL_PASSWORD, params.getAccount());
+    this.accountDao.delete(old);
+
+    AccountPrincipal principal = new AccountPrincipalEmailEntity(
+        params.getAccount(), old.getPublicKey(), this.passwordEncoder.encode(params.getPassword()));
+    principal = this.accountDao.insert(principal);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("reset return : %s", principal.getAccount()));
+    }
+    return principal.getAccount();
   }
 
   @Override

@@ -2125,7 +2125,9 @@ public abstract class Asserts {
    * @since 2016. 8. 1.
    */
   private static boolean isEqual(Object instance, Object that) {
-    if (null == instance && null == that) {
+    if (instance == that) {
+      return true;
+    } else if (null == instance && null == that) {
       return true;
     }
     return null != instance && instance.equals(that);

@@ -114,7 +114,9 @@ public abstract class AbstractAccountCode extends AbstractUpdatableEntity implem
     }
 
     this.used = Instant.now();
-    this.account.enable();
+    if (AccountCodeType.ACTIVATE == this.type) {
+      this.account.enable();
+    }
 
     return this.account;
   }

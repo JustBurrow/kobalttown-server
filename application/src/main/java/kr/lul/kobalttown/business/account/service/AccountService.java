@@ -16,7 +16,28 @@ public interface AccountService {
 
   Account read(long id);
 
+  /**
+   * @param params
+   * @return
+   * @@since 2017. 10. 9.
+   */
+  Account read(ReadAccountCodeParams params) throws PropertyException;
+
+  /**
+   * @param email
+   * @return
+   * @@since 2017. 10. 9.
+   */
+  Account read(String email);
+
   Account activate(String code) throws IllegalAccountActivateCodeException;
+
+  /**
+   * @param params
+   * @return
+   * @@since 2017. 10. 9.
+   */
+  Account reset(ResetAccountParams params) throws PropertyException;
 
   Account update(UpdateAccountParams params) throws PropertyException;
 
