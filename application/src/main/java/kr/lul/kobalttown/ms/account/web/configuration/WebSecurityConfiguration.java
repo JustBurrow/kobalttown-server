@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.ms.account.web.configuration;
 
-import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalEmailRepository;
+import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalRepository;
 import kr.lul.kobalttown.support.security.AuthService;
 import kr.lul.kobalttown.support.security.AuthServiceImpl;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
   private static final Logger log = LoggerFactory.getLogger(WebSecurityConfiguration.class);
 
   @Autowired
-  private AccountPrincipalEmailRepository accountPrincipalEmailRepository;
+  private AccountPrincipalRepository accountPrincipalRepository;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -41,7 +41,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Bean
   public AuthService authService() {
     AuthServiceImpl authService = new AuthServiceImpl();
-    authService.setAccountPrincipalEmailRepository(this.accountPrincipalEmailRepository);
+    authService.setAccountPrincipalRepository(this.accountPrincipalRepository);
     return authService;
   }
 

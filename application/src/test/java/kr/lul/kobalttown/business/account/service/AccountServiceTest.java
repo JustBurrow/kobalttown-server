@@ -6,7 +6,7 @@ import kr.lul.kobalttown.domain.account.*;
 import kr.lul.kobalttown.jpa.account.entity.AbstractAccountCode;
 import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEntity;
 import kr.lul.kobalttown.jpa.account.repository.AccountCodeRepository;
-import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalEmailRepository;
+import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalRepository;
 import kr.lul.kobalttown.util.AssertionException;
 import kr.lul.kobalttown.util.EmailUtils;
 import org.junit.Before;
@@ -40,9 +40,9 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
   private String domain;
 
   @Autowired
-  private AccountCodeRepository           accountCodeRepository;
+  private AccountCodeRepository      accountCodeRepository;
   @Autowired
-  private AccountPrincipalEmailRepository accountPrincipalEmailRepository;
+  private AccountPrincipalRepository accountPrincipalRepository;
 
   @Override
   @Before
@@ -50,7 +50,7 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
     super.setUp();
 
     assertThat(this.accountCodeRepository).isNotNull();
-    assertThat(this.accountPrincipalEmailRepository).isNotNull();
+    assertThat(this.accountPrincipalRepository).isNotNull();
   }
 
   @Test
@@ -143,10 +143,11 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
   @Test
   public void testUpdateEmailPassword() throws Exception {
     // Given
-    final String                oldPassword = randomAlphanumeric(10);
-    final Account               account     = randomAccount(oldPassword);
-    final long                  accountId   = account.getId();
-    final AccountPrincipalEmail old         = this.accountPrincipalEmailRepository.findOneByEmail(account.getEmail());
+    final String  oldPassword = randomAlphanumeric(10);
+    final Account account     = randomAccount(oldPassword);
+    final long    accountId   = account.getId();
+    final AccountPrincipalEmail old = (AccountPrincipalEmail) this.accountPrincipalRepository.findOneByPublicKey(
+        account.getEmail());
     final String                newPassword = randomAlphanumeric(4, 20);
     final UpdatePrincipalParams params      = new UpdatePrincipalParams(account);
     params.setType(AccountPrincipalType.EMAIL_PASSWORD);
@@ -161,7 +162,7 @@ public class AccountServiceTest extends AbstractAccountServiceTest {
     final Account actual = this.accountService.update(params);
 
     // Then
-    final AccountPrincipalEntity principal = this.accountPrincipalEmailRepository.findOneByEmail(account.getEmail());
+    final AccountPrincipalEntity principal = this.accountPrincipalRepository.findOneByPublicKey(account.getEmail());
 
     assertThat(actual)
         .isNotNull()

@@ -7,15 +7,10 @@ import kr.lul.kobalttown.jpa.account.entity.AccountEntity;
 import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEntity;
 import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalRepository;
 import kr.lul.kobalttown.jpa.account.repository.AccountRepository;
-import kr.lul.kobalttown.util.IllegalConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static kr.lul.kobalttown.util.Asserts.*;
@@ -28,26 +23,9 @@ import static kr.lul.kobalttown.util.Asserts.*;
   private static final Logger log = LoggerFactory.getLogger(AccountDao.class);
 
   @Autowired
-  private AccountRepository accountRepository;
-
-  private Map<AccountPrincipalType, AccountPrincipalRepository> accountPrincipalRepositoryMap;
-
+  private AccountRepository          accountRepository;
   @Autowired
-  private void setAccountPrincipalRepositories(List<AccountPrincipalRepository> repositories) {
-    if (log.isTraceEnabled()) {
-      log.trace(format("repositories=%s", repositories));
-    }
-    if (null == repositories || repositories.isEmpty()) {
-      IllegalConfigurationException e = new IllegalConfigurationException(
-          "account principal repositories is " + (null == repositories ? "null." : "empty."));
-      log.error("bean autowiring fail.", e);
-      throw e;
-    }
-
-    this.accountPrincipalRepositoryMap = repositories
-        .stream()
-        .collect(Collectors.toMap(AccountPrincipalRepository::supportType, repository -> repository));
-  }
+  private AccountPrincipalRepository accountPrincipalRepository;
 
   @Override
   public Account insert(Account account) {
@@ -120,8 +98,7 @@ import static kr.lul.kobalttown.util.Asserts.*;
     notNull(principal, "principal");
     positive(principal.getAccount().getId(), "principal.account.id");
 
-    principal = (AccountPrincipal) this.accountPrincipalRepositoryMap
-        .get(principal.getType())
+    principal = (AccountPrincipal) this.accountPrincipalRepository
         .save((AccountPrincipalEntity) principal);
 
     if (log.isTraceEnabled()) {
@@ -139,9 +116,8 @@ import static kr.lul.kobalttown.util.Asserts.*;
     notNull(account, "account");
     assignable(account, AccountEntity.class, "account");
 
-    AccountPrincipalEntity principal = this.accountPrincipalRepositoryMap
-        .get(type)
-        .findOneByAccount((AccountEntity) account);
+    AccountPrincipalEntity principal = this.accountPrincipalRepository
+        .findOneByAccount(account);
 
     if (log.isTraceEnabled()) {
       log.trace(format("selectPrincipal return : %s", principal));
@@ -154,10 +130,8 @@ import static kr.lul.kobalttown.util.Asserts.*;
     if (log.isTraceEnabled()) {
       log.trace(format("delete args : principal=%s", principal));
     }
-
-    AccountPrincipalRepository repository = this.accountPrincipalRepositoryMap.get(principal.getType());
-    repository.delete(principal);
-    repository.flush();
+    this.accountPrincipalRepository.delete((AccountPrincipalEntity) principal);
+    this.accountPrincipalRepository.flush();
   }
 }
 

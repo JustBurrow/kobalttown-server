@@ -29,6 +29,8 @@ import static java.lang.String.format;
 import static kr.lul.kobalttown.util.Asserts.notNull;
 
 /**
+ * TODO 에러 핸들러.
+ *
  * @author justburrow
  * @since 2017. 9. 13.
  */

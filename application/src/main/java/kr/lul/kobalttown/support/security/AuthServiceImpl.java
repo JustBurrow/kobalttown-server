@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.support.security;
 
 import kr.lul.kobalttown.domain.account.AccountPrincipal;
-import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalEmailRepository;
+import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -18,15 +18,15 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
 public class AuthServiceImpl implements AuthService {
   private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
 
-  private AccountPrincipalEmailRepository accountPrincipalEmailRepository;
+  private AccountPrincipalRepository accountPrincipalRepository;
 
-  public void setAccountPrincipalEmailRepository(AccountPrincipalEmailRepository repository) {
+  public void setAccountPrincipalRepository(AccountPrincipalRepository repository) {
     if (log.isTraceEnabled()) {
-      log.trace(String.format("setAccountPrincipalEmailRepository args : repository=%s", repository));
+      log.trace(String.format("setAccountPrincipalRepository args : repository=%s", repository));
     }
     notNull(repository, "repository");
 
-    this.accountPrincipalEmailRepository = repository;
+    this.accountPrincipalRepository = repository;
   }
 
   @Override
@@ -35,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
       log.trace(format("args : userKey=%s", userKey));
     }
 
-    AccountPrincipal principal = this.accountPrincipalEmailRepository.findOneByEmail(userKey);
+    AccountPrincipal principal = this.accountPrincipalRepository.findOneByPublicKey(userKey);
     if (null == principal) {
       UsernameNotFoundException e = new UsernameNotFoundException(userKey);
       log.info(format("account does not exist. userKey=%s", userKey), e);

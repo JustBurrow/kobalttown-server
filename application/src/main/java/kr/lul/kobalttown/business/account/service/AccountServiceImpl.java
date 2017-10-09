@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -97,7 +98,11 @@ import static kr.lul.kobalttown.util.Asserts.*;
 
     // save login info
     AccountPrincipal principal = new AccountPrincipalEmailEntity(account, params.getEmail(), params.getPassword());
-    principal = this.accountDao.insert(principal);
+    try {
+      principal = this.accountDao.insert(principal);
+    } catch (DataIntegrityViolationException e) {
+      // TODO 등록된 이메일일 경우의 대응.
+    }
 
     // save activate code
     AccountCode activateCode = this.accountCodeService.createAcitivateCode(account);
