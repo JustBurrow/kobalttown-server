@@ -216,27 +216,32 @@ import static kr.lul.kobalttown.util.Asserts.notNull;
         for (CauseProperty p : e.getProperties()) {
           binding.addError(new FieldError("resetReq", p.getName(), p.getMessage()));
         }
+      } catch (DataNotExistException e) {
+        // TODO DataNotExistException 은 일반적인 경우의 예외이기 때문에 좀 더 특수한 예외를 사용할 필요가 있다.
+        return "accounts/reset-fail";
       }
     }
 
-    if (log.isTraceEnabled()) {
-      log.trace(format("reset result : binding=%s, model=%s", binding, model));
-    }
-
+    String template;
     if (binding.hasErrors()) {
       req.setPassword(null);
       req.setConfirm(null);
 
       try {
         doResetForm(code, model);
-        return "accounts/reset";
+        template = "accounts/reset";
       } catch (PropertyException e) {
         log.warn(format("fail to reset account : code='%s', req=%s", code, req), e);
-        return "accounts/reset-disable";
+        template = "accounts/reset-disable";
       }
     } else {
-      return "accounts/reset-success";
+      template = "accounts/reset-success";
     }
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("reset result : binding=%s, model=%s", binding, model));
+    }
+    return template;
   }
 
   @Override
