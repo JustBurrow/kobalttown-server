@@ -1,0 +1,137 @@
+package kr.lul.kobalttown.business.account.dao;
+
+import kr.lul.kobalttown.domain.account.Account;
+import kr.lul.kobalttown.domain.account.AccountPrincipal;
+import kr.lul.kobalttown.domain.account.AccountPrincipalType;
+import kr.lul.kobalttown.jpa.account.entity.AccountEntity;
+import kr.lul.kobalttown.jpa.account.entity.AccountPrincipalEntity;
+import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalRepository;
+import kr.lul.kobalttown.jpa.account.repository.AccountRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import static java.lang.String.format;
+import static kr.lul.kobalttown.util.Asserts.*;
+
+/**
+ * @author justburrow
+ * @since 2017. 8. 8.
+ */
+@SuppressWarnings("SpringAutowiredFieldsWarningInspection") @Service class AccountDaoImpl implements AccountDao {
+  private static final Logger log = LoggerFactory.getLogger(AccountDao.class);
+
+  @Autowired
+  private AccountRepository          accountRepository;
+  @Autowired
+  private AccountPrincipalRepository accountPrincipalRepository;
+
+  @Override
+  public Account insert(Account account) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("args : account=%s", account));
+    }
+    zero(account.getId(), "account.id");
+    isNull(account.getCreate(), "account.create");
+    isNull(account.getUpdate(), "account.update");
+
+    account = this.accountRepository.save((AccountEntity) account);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("return : account=%s", account));
+    }
+    return account;
+  }
+
+  @Override
+  public Account select(long id) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("select args : id=%d", id));
+    }
+
+    Account account = this.accountRepository.findOne(id);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("select return : %s", account));
+    }
+    return account;
+  }
+
+  @Override
+  public Account select(String name) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("select args : name='%s'", name));
+    }
+
+    AccountEntity account = this.accountRepository.findOneByName(name);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("select return : %s", account));
+    }
+    return account;
+  }
+
+  /**
+   * @@since 2017. 9. 28.
+   */
+  @Override
+  public Account selectEmail(String email) {
+    if (log.isTraceEnabled()) {
+      log.trace(String.format("selectEmail args : email='%s'", email));
+    }
+    hasLength(email, "email");
+
+    Account account = this.accountRepository.findOneByEmail(email);
+
+    if (log.isTraceEnabled()) {
+      log.trace(String.format("selectEmail return : %s", account));
+    }
+    return account;
+  }
+
+  @Override
+  public AccountPrincipal insert(AccountPrincipal principal) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("args : principal=%s", principal));
+    }
+    notNull(principal, "principal");
+    positive(principal.getAccount().getId(), "principal.account.id");
+
+    principal = (AccountPrincipal) this.accountPrincipalRepository
+        .save((AccountPrincipalEntity) principal);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("return=%s", principal));
+    }
+    return principal;
+  }
+
+  @Override
+  public AccountPrincipal selectPrincipal(AccountPrincipalType type, Account account) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("selectPrincipal args : account=%s", account));
+    }
+    notNull(type, "type");
+    notNull(account, "account");
+    assignable(account, AccountEntity.class, "account");
+
+    AccountPrincipalEntity principal = this.accountPrincipalRepository
+        .findOneByAccount(account);
+
+    if (log.isTraceEnabled()) {
+      log.trace(format("selectPrincipal return : %s", principal));
+    }
+    return principal;
+  }
+
+  @Override
+  public void delete(AccountPrincipal principal) {
+    if (log.isTraceEnabled()) {
+      log.trace(format("delete args : principal=%s", principal));
+    }
+    this.accountPrincipalRepository.delete((AccountPrincipalEntity) principal);
+    this.accountPrincipalRepository.flush();
+  }
+}
+

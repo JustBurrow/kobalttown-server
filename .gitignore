@@ -25,5 +25,6 @@ Temporary Items
 .idea/
 
 # Springframework #####################################################################################################
-**/config/
-**/target/
+config/
+!config/sample-*
+target/
