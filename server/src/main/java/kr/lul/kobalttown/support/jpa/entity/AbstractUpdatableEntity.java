@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.support.jpa.entity;
 
-import kr.lul.kobalttown.domain.account.Updatable;
+import kr.lul.kobalttown.account.domain.Updatable;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;

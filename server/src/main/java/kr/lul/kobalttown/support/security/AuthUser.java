@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.support.security;
 
-import kr.lul.kobalttown.domain.account.AccountPrincipal;
-import kr.lul.kobalttown.domain.account.AccountSimple;
+import kr.lul.kobalttown.account.domain.AccountPrincipal;
+import kr.lul.kobalttown.account.domain.AccountSimple;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

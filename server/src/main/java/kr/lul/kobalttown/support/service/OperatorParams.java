@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.support.service;
 
-import kr.lul.kobalttown.domain.account.Account;
+import kr.lul.kobalttown.account.domain.Account;
 
 import static kr.lul.kobalttown.util.Asserts.notNull;
 

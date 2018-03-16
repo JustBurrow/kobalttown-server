@@ -1,7 +1,7 @@
 package kr.lul.kobalttown.support.security;
 
-import kr.lul.kobalttown.domain.account.AccountPrincipal;
-import kr.lul.kobalttown.jpa.account.repository.AccountPrincipalRepository;
+import kr.lul.kobalttown.account.domain.AccountPrincipal;
+import kr.lul.kobalttown.account.jpa.repository.AccountPrincipalRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

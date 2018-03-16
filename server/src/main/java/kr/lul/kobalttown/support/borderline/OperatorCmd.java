@@ -1,6 +1,6 @@
 package kr.lul.kobalttown.support.borderline;
 
-import kr.lul.kobalttown.domain.account.AccountSimple;
+import kr.lul.kobalttown.account.domain.AccountSimple;
 
 import static kr.lul.kobalttown.util.Asserts.notNull;
 
